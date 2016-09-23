@@ -8,8 +8,8 @@
 (in-package :bbs-test-asd)
 
 (defsystem bbs-test
-  :author ""
-  :license ""
+  :author "hiroshi kimura"
+  :license "free"
   :depends-on (:bbs
                :prove)
   :components ((:module "t"

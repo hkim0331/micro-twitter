@@ -74,7 +74,7 @@ simple bbs on classroom based on hunchensocket demo.
        (:title "bulletin board system")
        (:link :rel "stylesheet"
               :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
-       (:link :rel "stylesheet" :href "/bbs.css"))
+       (:link :rel "stylesheet" :href "/my.css"))
       (:body
        (:div
         :class "container"
@@ -86,7 +86,7 @@ simple bbs on classroom based on hunchensocket demo.
          (format t "programmed by hkimura, release ~a." *version*)))
        (:script :src "https://code.jquery.com/jquery.js")
        (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
-       (:script :src "/bbs.js")))))
+       (:script :src "/my.js")))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
   ((name :initarg :name
@@ -149,7 +149,6 @@ simple bbs on classroom based on hunchensocket demo.
 (define-easy-handler (index :uri "/index") ()
   (standard-page
     (:form :action "/submit"  :method "post"
-           ;; static/bbs.js uses this value.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
@@ -174,9 +173,9 @@ simple bbs on classroom based on hunchensocket demo.
   (push (create-static-file-dispatcher-and-handler
          "/robots.txt" "static/robots.txt") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/bbs.css" "static/bbs.css") *dispatch-table*)
+         "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/bbs.js" "static/bbs.js") *dispatch-table*)
+         "/my.js"  "static/my.js") *dispatch-table*)
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
