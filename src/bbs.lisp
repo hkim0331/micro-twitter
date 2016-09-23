@@ -47,7 +47,7 @@ simple bbs on classroom based on hunchensocket demo.
    (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
   ((probe-file #p"/home/hkim")
    (setq *my-addr* "localhost")
-   (setq *ws-uri* (format nil "ws://bbs.melt.kyutecha.c.jp/bbs")))
+   (setq *ws-uri* (format nil "ws://bbs.melt.kyutech.ac.jp/bbs")))
   (t (setq *my-addr* "localhost")
      (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
 
