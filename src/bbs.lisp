@@ -22,7 +22,7 @@ simple bbs on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
 
-(defvar *version* "2.1.1")
+(defvar *version* "2.1.2")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
