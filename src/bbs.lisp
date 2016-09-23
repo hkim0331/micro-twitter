@@ -22,7 +22,7 @@ simple bbs on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
 
-(defvar *version* "2.0")
+(defvar *version* "2.1")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -39,6 +39,17 @@ simple bbs on classroom based on hunchensocket demo.
 
 (defvar *http-server*)
 (defvar *ws-server*)
+
+;; check before installation
+(cond
+  ((probe-file #p"/edu/")
+   (setq *my-addr* *kodama-1*)
+   (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
+  ((probe-file #p"/home/hkim")
+   (setq *my-addr* "bbs.melt.kyutech.ac.jp")
+   (setq *ws-uri* (format nil "ws://~a/bbs" *my-addr*)))
+  (t (setq *my-addr* "localhost")
+     (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
 
 (defmacro navi ()
   `(htm
@@ -76,30 +87,6 @@ simple bbs on classroom based on hunchensocket demo.
        (:script :src "https://code.jquery.com/jquery.js")
        (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
        (:script :src "/bbs.js")))))
-
-(defun getenv (name &optional default)
-  "Obtains the current value of the POSIX environment variable NAME."
-  (declare (type (or string symbol) name))
-  (let ((name (string name)))
-    (or #+abcl (ext:getenv name)
-        #+ccl (ccl:getenv name)
-        #+clisp (ext:getenv name)
-        #+cmu (unix:unix-getenv name) ; since CMUCL 20b
-        #+ecl (si:getenv name)
-        #+gcl (si:getenv name)
-        #+mkcl (mkcl:getenv name)
-        #+sbcl (sb-ext:posix-getenv name)
-        default)))
-
-(cond
-  ((string= (getenv "BBS") "production")
-   (setq *my-addr* "localhost")
-   (setq *ws-uri* "ws://bbs.melt.kyutech.ac.jp/bbs"))
-  ((string= (getenv "BBS") "isc")
-   (setq *my-addr* *kodama-1*)
-   (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
-  (t (setq *my-addr* "localhost")
-     (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
   ((name :initarg :name
@@ -157,9 +144,9 @@ simple bbs on classroom based on hunchensocket demo.
                       "")
                   (escape-string tweet)
                   *tweets*)))
-  (redirect "/index"))
+  (redirect "/bbs"))
 
-(define-easy-handler (index :uri "/index") ()
+(define-easy-handler (bbs :uri "/bbs") ()
   (standard-page
     (:form :action "/submit"  :method "post"
            ;; static/bbs.js uses this value.
@@ -173,15 +160,15 @@ simple bbs on classroom based on hunchensocket demo.
 
 (define-easy-handler (reset :uri "/reset") ()
   (setf *tweets* "")
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (define-easy-handler (on :uri "/on") ()
   (setf *display-ip* t)
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (define-easy-handler (off :uri "/off") ()
   (setf *display-ip* nil)
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (defun start-server ()
   (push (create-static-file-dispatcher-and-handler
@@ -198,7 +185,7 @@ simple bbs on classroom based on hunchensocket demo.
                        :address *my-addr* :port *ws-port*))
   (start *http-server*)
   (start *ws-server*)
-  (format t "http://~a:~d/index~%" *my-addr* *http-port*)
+  (format t "http://~a:~d/bbs~%" *my-addr* *http-port*)
   (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
