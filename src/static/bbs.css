@@ -1,6 +1,6 @@
 body { font-family: sans-serif;}
 h2,h3 { color: red;}
-input#tweet { font-size: Large; width: 100%;}
+input#tweet { font-size: large; width: 100%;}
 div#timeline { color: navy;}
 div#timeline hr { margin-top: 5px; margin-bottom: 5px;}
 span.addr { font-size:smaller; color:darkgreen; }

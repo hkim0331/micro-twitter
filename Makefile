@@ -9,7 +9,7 @@ start: bbs
 
 # FIXME: date +%F is not enough.
 stop:
-	kill `ps ax | grep [.]/bbs | head -1 | awk '{print $$1}'`
+	kill `ps ax | grep '[.]/bbs' | head -1 | awk '{print $$1}'`
 	mv nohup.out nohup.out.`date +%F`
 
 clean:
