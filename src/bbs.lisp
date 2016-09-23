@@ -157,9 +157,9 @@ simple bbs on classroom based on hunchensocket demo.
                       "")
                   (escape-string tweet)
                   *tweets*)))
-  (redirect "/index"))
+  (redirect "/bbs"))
 
-(define-easy-handler (index :uri "/index") ()
+(define-easy-handler (bbs :uri "/bbs") ()
   (standard-page
     (:form :action "/submit"  :method "post"
            ;; static/bbs.js uses this value.
@@ -173,15 +173,15 @@ simple bbs on classroom based on hunchensocket demo.
 
 (define-easy-handler (reset :uri "/reset") ()
   (setf *tweets* "")
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (define-easy-handler (on :uri "/on") ()
   (setf *display-ip* t)
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (define-easy-handler (off :uri "/off") ()
   (setf *display-ip* nil)
-  (redirect "/index"))
+  (redirect "/bbs"))
 
 (defun start-server ()
   (push (create-static-file-dispatcher-and-handler
@@ -198,7 +198,7 @@ simple bbs on classroom based on hunchensocket demo.
                        :address *my-addr* :port *ws-port*))
   (start *http-server*)
   (start *ws-server*)
-  (format t "http://~a:~d/index~%" *my-addr* *http-port*)
+  (format t "http://~a:~d/bbs~%" *my-addr* *http-port*)
   (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
