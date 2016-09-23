@@ -1,8 +1,8 @@
-//var output;
+var output;
 
 function init() {
     ws = document.getElementById("ws").value;
-//    output = document.getElementById("timeline");
+    output = document.getElementById("timeline");
     testWebSocket(ws);
 }
 
@@ -36,7 +36,7 @@ function doSend(message) {
 }
 
 function writeToScreen(message) {
-//    output.innerHTML = message;
+    output.innerHTML = message;
 }
 
 window.addEventListener("load", init, false);
