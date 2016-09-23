@@ -46,8 +46,8 @@ simple bbs on classroom based on hunchensocket demo.
    (setq *my-addr* *kodama-1*)
    (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
   ((probe-file #p"/home/hkim")
-   (setq *my-addr* "bbs.melt.kyutech.ac.jp")
-   (setq *ws-uri* (format nil "ws://~a/bbs" *my-addr*)))
+   (setq *my-addr* "localhost")
+   (setq *ws-uri* (format nil "ws://bbs.melt.kyutecha.c.jp/bbs")))
   (t (setq *my-addr* "localhost")
      (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
 
@@ -144,9 +144,9 @@ simple bbs on classroom based on hunchensocket demo.
                       "")
                   (escape-string tweet)
                   *tweets*)))
-  (redirect "/bbs"))
+  (redirect "/index"))
 
-(define-easy-handler (bbs :uri "/bbs") ()
+(define-easy-handler (index :uri "/index") ()
   (standard-page
     (:form :action "/submit"  :method "post"
            ;; static/bbs.js uses this value.
@@ -160,15 +160,15 @@ simple bbs on classroom based on hunchensocket demo.
 
 (define-easy-handler (reset :uri "/reset") ()
   (setf *tweets* "")
-  (redirect "/bbs"))
+  (redirect "/index"))
 
 (define-easy-handler (on :uri "/on") ()
   (setf *display-ip* t)
-  (redirect "/bbs"))
+  (redirect "/index"))
 
 (define-easy-handler (off :uri "/off") ()
   (setf *display-ip* nil)
-  (redirect "/bbs"))
+  (redirect "/index"))
 
 (defun start-server ()
   (push (create-static-file-dispatcher-and-handler
