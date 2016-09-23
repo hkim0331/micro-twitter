@@ -7,4 +7,6 @@
 *~
 .#*
 nohup.out*
-src/bbs
+bbs
+static
+

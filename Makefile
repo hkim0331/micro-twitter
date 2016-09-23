@@ -1,17 +1,18 @@
-src/bbs:
+bbs:
 	sbcl --eval "(ql:quickload :bbs)" --eval "(in-package :bbs)" \
-	--eval "(sb-ext:save-lisp-and-die \"src/bbs\" :executable t :toplevel 'main)"
+	--eval "(sb-ext:save-lisp-and-die \"bbs\" :executable t :toplevel 'main)"
 
 restart: stop clean start
 
-start: src/bbs
-	nohup ./src/bbs &
+start: bbs
+	nohup ./bbs &
 
 # FIXME: date +%F is not enough.
 stop:
-	kill `ps ax | grep /bbs | head -1 | awk '{print $$1}'`
+	kill `ps ax | grep [.]/bbs | head -1 | awk '{print $$1}'`
 	mv nohup.out nohup.out.`date +%F`
 
 clean:
-	${RM} ./src/bbs nohup.out
+	${RM} ./bbs
+
 
