@@ -3,16 +3,7 @@ copyright (c) 2017 Hiroshi Kimura.
 
 simple bbs on classroom based on hunchensocket demo.
 
-* meteor 版は mongodb を必要とするが、
-  こちらはシンプルに *tweets* 変数にメッセージをつなぐだけ。
-
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
-
-* 2016-04-13: EXPORT BBS_ENV=development で開発ポート(8080, 8081)を使う。
-  orange でのサービスは nginx でリバースプロキシーを通す。
-  自分は 127.0.0.1:20155 でサービス出しているつもりだが、
-  リバースプロキシーのおかげで外部からは bbs.melt.kyutech.ac.jp/bbs で
-  つながる。
 
 * 2016-05-23 CHANGED
   20154 と 20155 を使うように変更。
@@ -21,12 +12,33 @@ simple bbs on classroom based on hunchensocket demo.
   そちらはプロキシーなしの hunchentoot ダイレクトなので、
   ユーザの第４オクテットは端末のそれとなる。
 
+* 2016-09-23 書き直し
+  あまり変わってないか？ /on と /off で IP 表示のオンとオフ。
+
 |#
 
 (in-package :cl-user)
 (defpackage bbs
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
+
+(defvar *version* "2.0")
+
+(defvar *tweets* "")
+(defvar *tweet-max* 140)
+(defvar *http-port* 20154)
+(defvar *ws-port*   20155)
+(defvar *my-addr*)
+(defvar *ws-uri*)
+
+(defvar *c-2b* "10.28.100.200")
+(defvar *c-2g* "10.28.102.200")
+(defvar *kodama-1* "10.27.104.1")
+
+(defvar *display-ip* nil)
+
+(defvar *http-server*)
+(defvar *ws-server*)
 
 (defmacro navi ()
   `(htm
@@ -64,23 +76,6 @@ simple bbs on classroom based on hunchensocket demo.
        (:script :src "https://code.jquery.com/jquery.js")
        (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
        (:script :src "/bbs.js")))))
-
-(defvar *version* "2.0")
-(defvar *tweets* "")
-(defvar *tweet-max* 140)
-(defvar *http-port* 20154)
-(defvar *ws-port*   20155)
-(defvar *my-addr*)
-(defvar *ws-uri*)
-
-(defvar *c-2b* "10.28.100.200")
-(defvar *c-2g* "10.28.102.200")
-(defvar *kodama-1* "10.27.104.1")
-
-(defvar *display-ip* nil)
-
-(defvar *http-server*)
-(defvar *ws-server*)
 
 (defun getenv (name &optional default)
   "Obtains the current value of the POSIX environment variable NAME."
@@ -167,13 +162,13 @@ simple bbs on classroom based on hunchensocket demo.
 (define-easy-handler (index :uri "/index") ()
   (standard-page
     (:form :action "/submit"  :method "post"
-           ;; javascript static/my.js uses this value.
-           ;; when production
+           ;; static/bbs.js uses this value.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
-    ;; (:div :id "timeline" (format t "~a" *tweets*))
-    (:div :id "timeline")
+    (:div :id "timeline" (format t "~a" *tweets*))
+    ;; javascript fill the contents. which is better?
+    ;;(:div :id "timeline")
     ))
 
 (define-easy-handler (reset :uri "/reset") ()
