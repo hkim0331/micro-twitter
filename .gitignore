@@ -9,4 +9,6 @@
 nohup.out*
 bbs
 static
+log
+!log/.placeholder
 
