@@ -20,6 +20,8 @@ simple bbs on classroom based on hunchensocket demo.
 (in-package :cl-user)
 (defpackage bbs
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
+;; do not work as expected, 2.1.3.
+;; try later.
 ;; (in-package :cl-log)
 ;;     (setf (log-manager)
 ;;           (make-instance 'log-manager :message-class 'formatted-message))
@@ -133,6 +135,7 @@ simple bbs on classroom based on hunchensocket demo.
             second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
+  ;; FIXME: try again later. 2.1.3
   ;; (cl-log:log-message :bbs tweet)
   (format t "~a ~a~%" (remote-addr*) tweet)
   (when (and
@@ -144,11 +147,9 @@ simple bbs on classroom based on hunchensocket demo.
           (format nil
                   "<span><span class=\"date\">~a[~a]</span> ~a</span><hr>~a"
                   (now)
-                  ;; クライアントIPの第4オクテットをメッセージに追加。
-                  ;; リバースプロキシーでは無駄になるが。
                   (if *display-ip*
                       (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-                      "")
+                      "*")
                   (escape-string tweet)
                   *tweets*)))
   (redirect "/index"))
