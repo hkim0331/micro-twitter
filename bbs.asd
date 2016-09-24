@@ -8,11 +8,12 @@
 (in-package :bbs-asd)
 
 (defsystem bbs
-:version "2.1.2"
+:version "2.1.3"
   :author "hkimura"
   :license "free"
   :depends-on (:hunchentoot
                :hunchensocket
+               :cl-log
                :cl-who
                :cl-ppcre)
   :components ((:module "src"

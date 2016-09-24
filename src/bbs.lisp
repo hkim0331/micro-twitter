@@ -20,9 +20,15 @@ simple bbs on classroom based on hunchensocket demo.
 (in-package :cl-user)
 (defpackage bbs
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
+;; (in-package :cl-log)
+;;     (setf (log-manager)
+;;           (make-instance 'log-manager :message-class 'formatted-message))
+;; ;;FIXME:日付をファイル名に入れよう。
+;; (start-messenger 'text-file-messenger
+;;                  :filename "/tmp/bbs.log")
 (in-package :bbs)
 
-(defvar *version* "2.1.2")
+(defvar *version* "2.1.3")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -57,8 +63,7 @@ simple bbs on classroom based on hunchensocket demo.
     (:a :href "http://robocar-2016.melt.kyutech.ac.jp" "robocar")
     " | "
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
-    " ]"
-    ))
+    " ]"))
 
 (setf (html-mode) :html5)
 
@@ -128,6 +133,8 @@ simple bbs on classroom based on hunchensocket demo.
             second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
+  ;; (cl-log:log-message :bbs tweet)
+  (format t "~a ~a~%" (remote-addr*) tweet)
   (when (and
          (< (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
@@ -184,8 +191,9 @@ simple bbs on classroom based on hunchensocket demo.
                        :address *my-addr* :port *ws-port*))
   (start *http-server*)
   (start *ws-server*)
-  (format t "http://~a:~d/bbs~%" *my-addr* *http-port*)
-  (format t "~a~%" *ws-uri*))
+  (format t "http://~a:~d/index~%" *my-addr* *http-port*)
+  (format t "~a~%" *ws-uri*)
+  )
 
 (defun stop-server ()
   (format t "~a~%~a" (stop *http-server*) (stop *ws-server*)))
