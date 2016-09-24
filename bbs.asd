@@ -13,7 +13,7 @@
   :license "free"
   :depends-on (:hunchentoot
                :hunchensocket
-               :cl-log
+               ;; :cl-log
                :cl-who
                :cl-ppcre)
   :components ((:module "src"
