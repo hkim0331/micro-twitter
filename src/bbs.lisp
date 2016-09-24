@@ -28,7 +28,7 @@ simple bbs on classroom based on hunchensocket demo.
 ;;                  :filename "/tmp/bbs.log")
 (in-package :bbs)
 
-(defvar *version* "2.1.2")
+(defvar *version* "2.1.3")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
