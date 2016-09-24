@@ -1,5 +1,5 @@
 #|
-copyright (c) 2017 Hiroshi Kimura.
+copyright (c) 2015-2017 Hiroshi Kimura.
 
 simple bbs on classroom based on hunchensocket demo.
 
@@ -13,7 +13,9 @@ simple bbs on classroom based on hunchensocket demo.
   ユーザの第４オクテットは端末のそれとなる。
 
 * 2016-09-23 書き直し
-  あまり変わってないか？ /on と /off で IP 表示のオンとオフ。
+  あまり変わってないか？
+  /reset でメッセージ初期化。
+  /on と /off で IP 表示のオンとオフ。
 
 |#
 
@@ -126,18 +128,13 @@ simple bbs on classroom based on hunchensocket demo.
 (pushnew 'find-room hunchensocket:*websocket-dispatch-table*)
 
 (defun now ()
-  (multiple-value-bind
-        (second minute hour)
-      (get-decoded-time)
-    (format nil "~2,'0d:~2,'0d:~2,'0d"
-            hour
-            minute
-            second)))
+  (multiple-value-bind (second minute hour) (get-decoded-time)
+    (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
   ;; FIXME: try again later. 2.1.3
   ;; (cl-log:log-message :bbs tweet)
-  (format t "~a ~a~%" (remote-addr*) tweet)
+  (format t "~a BBS ~a~%" (remote-addr*) tweet)
   (when (and
          (< (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
@@ -160,8 +157,6 @@ simple bbs on classroom based on hunchensocket demo.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
-    ;;(:div :id "timeline" (format t "~a" *tweets*))
-    ;; javascript fill the contents. which is better?
     (:div :id "timeline")
     ))
 
@@ -193,8 +188,7 @@ simple bbs on classroom based on hunchensocket demo.
   (start *http-server*)
   (start *ws-server*)
   (format t "http://~a:~d/index~%" *my-addr* *http-port*)
-  (format t "~a~%" *ws-uri*)
-  )
+  (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
   (format t "~a~%~a" (stop *http-server*) (stop *ws-server*)))
