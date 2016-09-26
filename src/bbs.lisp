@@ -52,8 +52,10 @@ simple bbs on classroom based on hunchensocket demo.
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
     " | "
     (:a :href "/on" "on")
-    " | "
+        " | "
     (:a :href "/off" "off")
+    " | "
+    (:a :href "/reset" "reset")
     " ]"))
 
 (defmacro standard-page (&body body)
