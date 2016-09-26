@@ -50,9 +50,9 @@ simple bbs on classroom based on hunchensocket demo.
     (:a :href "http://robocar-2016.melt.kyutech.ac.jp" "robocar")
     " | "
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
-    " | "
+    " || "
     (:a :href "/on" "on")
-        " | "
+    " | "
     (:a :href "/off" "off")
     " | "
     (:a :href "/reset" "reset")
