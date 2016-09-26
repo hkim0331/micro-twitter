@@ -8,18 +8,17 @@
 (in-package :bbs-asd)
 
 (defsystem bbs
-:version "2.1.3"
+:version "2.2"
   :author "hkimura"
   :license "free"
   :depends-on (:hunchentoot
                :hunchensocket
-               ;; :cl-log
                :cl-who
                :cl-ppcre)
   :components ((:module "src"
                 :components
                 ((:file "bbs"))))
-  :description "class room bbs system"
+  :description "classroom bbs system"
   :long-description
   #.(with-open-file (stream (merge-pathnames
                              #p"README.markdown"
