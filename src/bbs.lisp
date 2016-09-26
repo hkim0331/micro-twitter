@@ -86,7 +86,7 @@ simple bbs on classroom based on hunchensocket demo.
          (format t "programmed by hkimura, release ~a." *version*)))
        (:script :src "https://code.jquery.com/jquery.js")
        (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
-       (:script :src "/bbs.js")))))
+       (:script :src "/my.js")))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
   ((name :initarg :name
