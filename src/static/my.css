@@ -3,5 +3,5 @@ h2,h3 { color: red;}
 input#tweet { font-size: large; width: 100%;}
 div#timeline { color: navy;}
 div#timeline hr { margin-top: 5px; margin-bottom: 5px;}
-span.addr { font-size:smaller; color:darkgreen; }
-span.date { color: darkgreen; font-weight: bold; }
+span.time { color: darkgreen; font-weight: bold; }
+span.addr { color:darkgreen; font-size:smaller; }
