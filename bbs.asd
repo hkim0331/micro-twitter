@@ -8,7 +8,7 @@
 (in-package :bbs-asd)
 
 (defsystem bbs
-:version "2.2"
+:version "3.0"
   :author "hkimura"
   :license "free"
   :depends-on (:hunchentoot
