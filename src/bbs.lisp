@@ -26,7 +26,7 @@ simple bbs on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
 
-(defvar *version* "2.2")
+(defvar *version* "3.0")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -50,6 +50,10 @@ simple bbs on classroom based on hunchensocket demo.
     (:a :href "http://robocar-2016.melt.kyutech.ac.jp" "robocar")
     " | "
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
+    " | "
+    (:a :href "/on" "on")
+    " | "
+    (:a :href "/off" "off")
     " ]"))
 
 (defmacro standard-page (&body body)
@@ -139,17 +143,30 @@ simple bbs on classroom based on hunchensocket demo.
     (:div :id "timeline")
     ))
 
+(defun auth? ()
+  (multiple-value-bind (user pass) (authorization)
+    (and (string= user "hkimura") (string= pass "pass"))))
+
 (define-easy-handler (reset :uri "/reset") ()
-  (setf *tweets* "")
-  (redirect "/index"))
+  (if (auth?)
+      (progn
+        (setf *tweets* "")
+        (redirect "/index"))
+      (require-authorization)))
 
 (define-easy-handler (on :uri "/on") ()
-  (setf *display-ip* t)
-  (redirect "/index"))
+  (if (auth?)
+      (progn
+        (setf *display-ip* t)
+        (redirect "/index"))
+      (require-authorization)))
 
 (define-easy-handler (off :uri "/off") ()
-  (setf *display-ip* nil)
-  (redirect "/index"))
+  (if (auth?)
+      (progn
+        (setf *display-ip* nil)
+        (redirect "/index"))
+      (require-authorization)))
 
 (define-easy-handler (test :uri "/test") ()
   (standard-page
