@@ -1,5 +1,5 @@
 #|
-copyright (c) 2015-2017 Hiroshi Kimura.
+copyright (c) 2017 Hiroshi Kimura.
 
 simple bbs on classroom based on hunchensocket demo.
 
@@ -13,26 +13,16 @@ simple bbs on classroom based on hunchensocket demo.
   ユーザの第４オクテットは端末のそれとなる。
 
 * 2016-09-23 書き直し
-  あまり変わってないか？
-  /reset でメッセージ初期化。
-  /on と /off で IP 表示のオンとオフ。
+  あまり変わってないか？ /on と /off で IP 表示のオンとオフ。
 
 |#
 
 (in-package :cl-user)
 (defpackage bbs
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
-;; do not work as expected, 2.1.3.
-;; try later.
-;; (in-package :cl-log)
-;;     (setf (log-manager)
-;;           (make-instance 'log-manager :message-class 'formatted-message))
-;; ;;FIXME:日付をファイル名に入れよう。
-;; (start-messenger 'text-file-messenger
-;;                  :filename "/tmp/bbs.log")
 (in-package :bbs)
 
-(defvar *version* "2.1.3")
+(defvar *version* "2.1")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -57,7 +47,7 @@ simple bbs on classroom based on hunchensocket demo.
    (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
   ((probe-file #p"/home/hkim")
    (setq *my-addr* "localhost")
-   (setq *ws-uri* (format nil "ws://bbs.melt.kyutech.ac.jp/bbs")))
+   (setq *ws-uri* (format nil "ws://bbs.melt.kyutecha.c.jp/bbs")))
   (t (setq *my-addr* "localhost")
      (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
 
@@ -67,7 +57,8 @@ simple bbs on classroom based on hunchensocket demo.
     (:a :href "http://robocar-2016.melt.kyutech.ac.jp" "robocar")
     " | "
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
-    " ]"))
+    " ]"
+    ))
 
 (setf (html-mode) :html5)
 
@@ -83,7 +74,7 @@ simple bbs on classroom based on hunchensocket demo.
        (:title "bulletin board system")
        (:link :rel "stylesheet"
               :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
-       (:link :rel "stylesheet" :href "/my.css"))
+       (:link :rel "stylesheet" :href "/bbs.css"))
       (:body
        (:div
         :class "container"
@@ -95,7 +86,7 @@ simple bbs on classroom based on hunchensocket demo.
          (format t "programmed by hkimura, release ~a." *version*)))
        (:script :src "https://code.jquery.com/jquery.js")
        (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
-       (:script :src "/my.js")))))
+       (:script :src "/bbs.js")))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
   ((name :initarg :name
@@ -128,13 +119,15 @@ simple bbs on classroom based on hunchensocket demo.
 (pushnew 'find-room hunchensocket:*websocket-dispatch-table*)
 
 (defun now ()
-  (multiple-value-bind (second minute hour) (get-decoded-time)
-    (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
+  (multiple-value-bind
+        (second minute hour)
+      (get-decoded-time)
+    (format nil "~2,'0d:~2,'0d:~2,'0d"
+            hour
+            minute
+            second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  ;; FIXME: try again later. 2.1.3
-  ;; (cl-log:log-message :bbs tweet)
-  (format t "~a BBS ~a~%" (remote-addr*) tweet)
   (when (and
          (< (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
@@ -144,9 +137,11 @@ simple bbs on classroom based on hunchensocket demo.
           (format nil
                   "<span><span class=\"date\">~a[~a]</span> ~a</span><hr>~a"
                   (now)
+                  ;; クライアントIPの第4オクテットをメッセージに追加。
+                  ;; リバースプロキシーでは無駄になるが。
                   (if *display-ip*
                       (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-                      "*")
+                      "")
                   (escape-string tweet)
                   *tweets*)))
   (redirect "/index"))
@@ -154,10 +149,13 @@ simple bbs on classroom based on hunchensocket demo.
 (define-easy-handler (index :uri "/index") ()
   (standard-page
     (:form :action "/submit"  :method "post"
+           ;; static/bbs.js uses this value.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
-    (:div :id "timeline")
+    (:div :id "timeline" (format t "~a" *tweets*))
+    ;; javascript fill the contents. which is better?
+    ;;(:div :id "timeline")
     ))
 
 (define-easy-handler (reset :uri "/reset") ()
@@ -176,9 +174,9 @@ simple bbs on classroom based on hunchensocket demo.
   (push (create-static-file-dispatcher-and-handler
          "/robots.txt" "static/robots.txt") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/my.css" "static/my.css") *dispatch-table*)
+         "/bbs.css" "static/bbs.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/my.js"  "static/my.js") *dispatch-table*)
+         "/bbs.js" "static/bbs.js") *dispatch-table*)
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
@@ -187,7 +185,7 @@ simple bbs on classroom based on hunchensocket demo.
                        :address *my-addr* :port *ws-port*))
   (start *http-server*)
   (start *ws-server*)
-  (format t "http://~a:~d/index~%" *my-addr* *http-port*)
+  (format t "http://~a:~d/bbs~%" *my-addr* *http-port*)
   (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
