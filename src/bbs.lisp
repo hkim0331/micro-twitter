@@ -22,7 +22,7 @@ simple bbs on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
 
-(defvar *version* "2.1.1")
+(defvar *version* "2.1")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -153,9 +153,9 @@ simple bbs on classroom based on hunchensocket demo.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
-    (:div :id "timeline" (format t "~a" *tweets*))
+    ;;(:div :id "timeline" (format t "~a" *tweets*))
     ;; javascript fill the contents. which is better?
-    ;;(:div :id "timeline")
+    (:div :id "timeline")
     ))
 
 (define-easy-handler (reset :uri "/reset") ()
