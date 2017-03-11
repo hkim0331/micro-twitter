@@ -18,6 +18,7 @@ simple bbs on classroom based on hunchensocket demo.
   /on と /off で IP 表示のオンとオフ。
 
 * 2016-09-26, ccl でバグの理由は？
+  localhost を使うと IPv6 で接続しようとするのかな？
 
 |#
 
@@ -26,7 +27,7 @@ simple bbs on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :bbs)
 
-(defvar *version* "3.0")
+(defvar *version* "3.1")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -47,7 +48,7 @@ simple bbs on classroom based on hunchensocket demo.
 (defmacro navi ()
   `(htm
     "[ "
-    (:a :href "http://robocar-2016.melt.kyutech.ac.jp" "robocar")
+    (:a :href "http://literacy.melt.kyutech.ac.jp" "literacy")
     " | "
     (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
     " || "
@@ -79,8 +80,6 @@ simple bbs on classroom based on hunchensocket demo.
         (:hr)
         (:span
          (format t "programmed by hkimura, release ~a." *version*)))
-       ;; (:script :src "https://code.jquery.com/jquery.js")
-       ;; (:script :src "https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js")
        (:script :src "/my.js")))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
@@ -104,12 +103,16 @@ simple bbs on classroom based on hunchensocket demo.
     (loop for peer in (hunchensocket:clients room)
        do (hunchensocket:send-text-message peer m))))
 
-;; 未実装:
-;; メッセージの中身を timeline の先頭にくっつけ、
-;; timeline の先頭から n 個を取り出し、
-;; 文字列に変換して返す。あるいは json で構造つけて返す。
+;; unuse variables user and message.
+;; however,  Generic-function's definition is,
+;; (HUNCHENSOCKET::RESOURCE
+;;  HUNCHENSOCKET::CLIENT
+;;  HUNCHENSOCKET::MESSAGE)
+;; can not remove.
 (defmethod hunchensocket:text-message-received ((room chat-room) user message)
-  (broadcast room "~a" *tweets*))
+  (broadcast room "~a"
+             (if *display-ip* *tweets*
+                 (cl-ppcre:regex-replace-all "\\[[0-9]*\\]" *tweets* "[ ]"))))
 
 (pushnew 'find-room hunchensocket:*websocket-dispatch-table*)
 
@@ -129,9 +132,7 @@ simple bbs on classroom based on hunchensocket demo.
            nil
            "<span><span class=\"time\">~a[~a]</span> ~a</span><hr>~a"
            (now)
-           (if *display-ip*
-               (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-               " ")
+           (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
            (escape-string tweet)
            *tweets*)))
   (redirect "/index"))
@@ -140,7 +141,12 @@ simple bbs on classroom based on hunchensocket demo.
   (standard-page
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
-           (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
+           (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね")
+           ;; (:textarea :id "tweet" :name "tweet" :placeholder "つぶやいてね"
+           ;;            :rows 5 :cols 60)
+           ;; (:br)
+           ;; (:input :type "submit")
+           )
     (:h3 "Messages")
     (:div :id "timeline")))
 
@@ -191,7 +197,7 @@ simple bbs on classroom based on hunchensocket demo.
     ((probe-file #p"/home/hkim")
      (setq *my-addr* "localhost")
      (setq *ws-uri* (format nil "ws://bbs.melt.kyutech.ac.jp/bbs")))
-    ;; FIND! when use 'localhost' instead of '127.0.0.1' with ccl,
+    ;; when use 'localhost' instead of '127.0.0.1' with ccl,
     ;; NOT WORK.
     (t (setq *my-addr* "127.0.0.1")
        (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
