@@ -142,8 +142,7 @@ simple bbs on classroom based on hunchensocket demo.
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "Messages")
-    (:div :id "timeline")
-    ))
+    (:div :id "timeline")))
 
 (defun auth? ()
   (multiple-value-bind (user pass) (authorization)

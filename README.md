@@ -19,6 +19,15 @@ or, when update,
 ```
 $ make restart
 ```
+then open,
+```
+http://localhost:20154/index
+```
+
+websocket waits for connection at,
+```
+ws://localhost:20155/bbs
+```
 
 ## TODO
 
