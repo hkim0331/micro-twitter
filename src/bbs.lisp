@@ -141,7 +141,12 @@ simple bbs on classroom based on hunchensocket demo.
   (standard-page
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
-           (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
+           (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね")
+           ;; (:textarea :id "tweet" :name "tweet" :placeholder "つぶやいてね"
+           ;;            :rows 5 :cols 60)
+           ;; (:br)
+           ;; (:input :type "submit")
+           )
     (:h3 "Messages")
     (:div :id "timeline")))
 
