@@ -7,10 +7,9 @@ restart: stop clean start
 start: bbs
 	nohup ./bbs &
 
-# FIXME: date +%F is not enough.
 stop:
 	kill `ps ax | grep '[.]/bbs' | head -1 | awk '{print $$1}'`
-	mv nohup.out nohup.out.`date +%F`
+	mv nohup.out nohup.out.`date +%F_%T`
 
 clean:
 	${RM} ./bbs
