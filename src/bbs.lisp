@@ -28,22 +28,20 @@ simple bbs on classroom based on hunchensocket demo.
 (in-package :bbs)
 
 (defvar *version* "3.1")
-
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 20154)
 (defvar *ws-port*   20155)
 (defvar *my-addr*)
 (defvar *ws-uri*)
-
-(defvar *c-2b* "10.28.100.200")
-(defvar *c-2g* "10.28.102.200")
-(defvar *kodama-1* "10.27.104.1")
-
 (defvar *display-ip* nil)
-
 (defvar *http-server*)
 (defvar *ws-server*)
+(defvar *kodama-1* "10.27.104.1")
+
+;;; no use
+;; (defvar *c-2b* "10.27.100.200")
+;; (defvar *c-2g* "10.27.102.200")
 
 (defmacro navi ()
   `(htm
