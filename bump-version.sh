@@ -13,9 +13,9 @@ else
 fi
 
 ${SED} -i.bak "/(defvar \*version\*/ c\
-(defvar *version* \"${VERSION}\")" src/bbs.lisp
+(defvar *version* \"${VERSION}\")" src/mt.lisp
 
 ${SED} -i.bak "/:version / c\
-  :version \"${VERSION}\"" bbs.asd
+  :version \"${VERSION}\"" mt.asd
 
 echo ${VERSION} > VERSION
