@@ -5,6 +5,7 @@ if [ $# -ne 1 ]; then
     exit
 fi
 VERSION=$1
+TODAY=`date +%F`
 
 if [ `uname` = 'Darwin' -a -e /usr/local/bin/gsed ]; then
     SED=/usr/local/bin/gsed
@@ -17,5 +18,9 @@ ${SED} -i.bak "/(defvar \*version\*/ c\
 
 ${SED} -i.bak "/:version / c\
   :version \"${VERSION}\"" mt.asd
+
+${SED} -i.bak "/^hkimura, / c\
+hkimura, ${TODAY}." README.md
+
 
 echo ${VERSION} > VERSION
