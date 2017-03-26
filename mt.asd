@@ -1,13 +1,13 @@
 #|
-  This file is a part of bbs project.
+  This file is a part of micro-twitter project.
 |#
 
 (in-package :cl-user)
-(defpackage bbs-asd
+(defpackage mt-asd
   (:use :cl :asdf))
-(in-package :bbs-asd)
+(in-package :mt-asd)
 
-(defsystem bbs
+(defsystem mt
 :version "3.1"
   :author "hkimura"
   :license "free"
@@ -17,8 +17,8 @@
                :cl-ppcre)
   :components ((:module "src"
                 :components
-                ((:file "bbs"))))
-  :description "classroom bbs system"
+                ((:file "mt"))))
+  :description "classroom micro twitter"
   :long-description
   #.(with-open-file (stream (merge-pathnames
                              #p"README.markdown"
@@ -31,4 +31,4 @@
                                :fill-pointer t)))
           (setf (fill-pointer seq) (read-sequence seq stream))
           seq)))
-  :in-order-to ((test-op (test-op bbs-test))))
+  :in-order-to ((test-op (test-op mt-test))))
