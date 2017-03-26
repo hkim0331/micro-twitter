@@ -1,6 +1,12 @@
 # bbs
 
 A small bbs for hkimura class.
+'mt' or 'micro twitter' may be better as a name of this product.
+
+## TODO
+
+* keep log
+* docker?
 
 ## Installation
 
@@ -39,13 +45,6 @@ websocket waits for connection at,
 ```
 ws://localhost:20155/bbs
 ```
-
-## TODO
-
-* cl-log
-
-## DONE
-
 
 ---
 hkimura.
