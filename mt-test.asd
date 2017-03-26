@@ -1,21 +1,21 @@
 #|
-  This file is a part of bbs project.
+  This file is a part of micro-twitter project.
 |#
 
 (in-package :cl-user)
-(defpackage bbs-test-asd
+(defpackage mt-test-asd
   (:use :cl :asdf))
-(in-package :bbs-test-asd)
+(in-package :mt-test-asd)
 
-(defsystem bbs-test
+(defsystem mt-test
   :author "hiroshi kimura"
   :license "free"
-  :depends-on (:bbs
+  :depends-on (:mt
                :prove)
   :components ((:module "t"
                 :components
-                ((:test-file "bbs"))))
-  :description "Test system for bbs"
+                ((:test-file "mt"))))
+  :description "Test system for mt"
 
   :defsystem-depends-on (:prove-asdf)
   :perform (test-op :after (op c)

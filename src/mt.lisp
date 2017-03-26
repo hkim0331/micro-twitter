@@ -1,14 +1,14 @@
 #|
 copyright (c) 2015-2017 Hiroshi Kimura.
 
-simple bbs on classroom based on hunchensocket demo.
+simple mt on classroom based on hunchensocket demo.
 
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
 
 * 2016-05-23 CHANGED
   20154 と 20155 を使うように変更。
-  C-2G の NAT の内側から bbs.melt にリクエスト行ったら kodama-1 に跳ね返す。
-  komada-1 にも bbs を動かしておき、
+  C-2G の NAT の内側から mt.melt にリクエスト行ったら kodama-1 に跳ね返す。
+  komada-1 にも mt を動かしておき、
   そちらはプロキシーなしの hunchentoot ダイレクトなので、
   ユーザの第４オクテットは端末のそれとなる。
 
@@ -23,11 +23,11 @@ simple bbs on classroom based on hunchensocket demo.
 |#
 
 (in-package :cl-user)
-(defpackage bbs
+(defpackage mt
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
-(in-package :bbs)
+(in-package :mt)
 
-(defvar *version* "3.1")
+(defvar *version* "3.2")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 20154)
@@ -91,7 +91,7 @@ simple bbs on classroom based on hunchensocket demo.
          :reader name
          :initform (error "Name this user!"))))
 
-(defvar *chat-rooms* (list (make-instance 'chat-room :name "/bbs")))
+(defvar *chat-rooms* (list (make-instance 'chat-room :name "/mt")))
 
 (defun find-room (request)
   (find (script-name request) *chat-rooms* :test #'string= :key #'name))
@@ -119,7 +119,7 @@ simple bbs on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  (format t "~a BBS ~a~%" (remote-addr*) tweet)
+  (format t "~a MT ~a~%" (remote-addr*) tweet)
   (when (and
          (< (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
@@ -191,14 +191,14 @@ simple bbs on classroom based on hunchensocket demo.
   (cond
     ((probe-file #p"/edu/")
      (setq *my-addr* *kodama-1*)
-     (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*)))
+     (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
     ((probe-file #p"/home/hkim")
      (setq *my-addr* "localhost")
-     (setq *ws-uri* (format nil "ws://bbs.melt.kyutech.ac.jp/bbs")))
+     (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
     ;; when use 'localhost' instead of '127.0.0.1' with ccl,
     ;; NOT WORK.
     (t (setq *my-addr* "127.0.0.1")
-       (setq *ws-uri* (format nil "ws://~a:~a/bbs" *my-addr* *ws-port*))))
+       (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
 
   (setf *http-server*
         (make-instance 'easy-acceptor
