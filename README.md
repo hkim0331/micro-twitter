@@ -1,7 +1,6 @@
-# bbs
+# micro twitter
 
-A small bbs for hkimura class.
-'mt' or 'micro twitter' may be better as a name of this product.
+A small twitter like app for hkimura class.
 
 ## TODO
 
@@ -15,9 +14,9 @@ A small bbs for hkimura class.
 ## develop
 
 ```
-CL-USER> (ql:quickload :bbs)
-CL-USER> (in-package :bbs)
-BBS> (start-server)
+CL-USER> (ql:quickload :mt)
+CL-USER> (in-package :mt)
+mt> (start-server)
 ```
 
 ## Usage
@@ -47,4 +46,4 @@ ws://localhost:20155/bbs
 ```
 
 ---
-hkimura.
+hkimura, 2017-03-26.
