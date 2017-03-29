@@ -2,8 +2,8 @@ server {
     listen 80;
     server_name mt.melt.kyutech.ac.jp;
 
-	access_log /var/log/nginx/mt_access.log;
-	error_log /var/log/nginx/mt_error.log;
+    access_log /var/log/nginx/mt_access.log;
+    error_log /var/log/nginx/mt_error.log;
 
     if ($remote_addr = '150.69.3.11' ) {
        rewrite /mt http://10.27.104.1:20154/mt redirect;
