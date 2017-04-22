@@ -6,7 +6,7 @@ server {
     error_log /var/log/nginx/mt_error.log;
 
     if ($remote_addr = '150.69.3.11' ) {
-       rewrite /mt http://10.27.104.1:20154/mt redirect;
+       rewrite /mt http://10.27.104.1:20155/mt redirect;
        rewrite ^(.*)$ http://10.27.104.1:20154 redirect;
     }
 
