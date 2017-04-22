@@ -27,7 +27,7 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
-(defvar *version* "3.2")
+(defvar *version* "3.3")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 20154)
