@@ -7,7 +7,7 @@ server {
 
     if ($remote_addr = '150.69.3.11' ) {
        rewrite /mt http://10.27.104.1:20154/mt redirect;
-       rewrite ^(.*)$ http://10.27.104.1:20154/index redirect;
+       rewrite ^(.*)$ http://10.27.104.1:20154 redirect;
     }
 
     proxy_set_header    X-Real-IP       $remote_addr;
@@ -22,9 +22,10 @@ server {
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
 
-    location = / {
-        proxy_pass http://127.0.0.1:20154/index;
-    }
+#
+#    location = / {
+#        proxy_pass http://127.0.0.1:20154/index;
+#    }
 
     location / {
         proxy_pass http://127.0.0.1:20154;
