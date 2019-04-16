@@ -27,7 +27,7 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
-(defvar *version* "3.2")
+(defvar *version* "3.3")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 20154)
@@ -133,9 +133,9 @@ simple mt on classroom based on hunchensocket demo.
            (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
            (escape-string tweet)
            *tweets*)))
-  (redirect "/index"))
+  (redirect "/"))
 
-(define-easy-handler (index :uri "/index") ()
+(define-easy-handler (index :uri "/") ()
   (standard-page
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
@@ -156,21 +156,21 @@ simple mt on classroom based on hunchensocket demo.
   (if (auth?)
       (progn
         (setf *tweets* "")
-        (redirect "/index"))
+        (redirect "/"))
       (require-authorization)))
 
 (define-easy-handler (on :uri "/on") ()
   (if (auth?)
       (progn
         (setf *display-ip* t)
-        (redirect "/index"))
+        (redirect "/"))
       (require-authorization)))
 
 (define-easy-handler (off :uri "/off") ()
   (if (auth?)
       (progn
         (setf *display-ip* nil)
-        (redirect "/index"))
+        (redirect "/"))
       (require-authorization)))
 
 (define-easy-handler (test :uri "/test") ()
@@ -204,7 +204,7 @@ simple mt on classroom based on hunchensocket demo.
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
   (start *http-server*)
-  (format t "http://~a:~d/index~%" *my-addr* *http-port*)
+  (format t "http://~a:~d/~%" *my-addr* *http-port*)
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
                        :address *my-addr* :port *ws-port*))
