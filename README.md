@@ -13,7 +13,7 @@ A small twitter like app for hkimura class.
 
 ## develop
 
-```
+```sh
 CL-USER> (ql:quickload :mt)
 CL-USER> (in-package :mt)
 mt> (start-server)
@@ -46,4 +46,4 @@ ws://localhost:20155/bbs
 ```
 
 ---
-hkimura, 2017-04-22.
+hkimura, 2019-04-17.
