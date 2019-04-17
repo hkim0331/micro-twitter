@@ -119,7 +119,7 @@ simple mt on classroom based on hunchensocket demo.
 (define-easy-handler (submit :uri "/submit") (tweet)
   (format t "~a MT ~a~%" (remote-addr*) tweet)
   (when (and
-         (< (length tweet) *tweet-max*)
+         (< 40 (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
          (not (cl-ppcre:scan "(.)\\1{4,}$" tweet))
          (not (cl-ppcre:scan "おっぱい" tweet)))
