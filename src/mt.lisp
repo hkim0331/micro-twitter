@@ -34,7 +34,7 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *tweet-max* 140)
 (defvar *http-port* 8000)
 (defvar *ws-port*   8001) ;; can not use same port.
-(defvar *my-addr* "153.126.191.228")
+(defvar *my-addr* "127.0.0.1")
 (defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *display-ip* nil)
 (defvar *http-server*)
@@ -98,7 +98,6 @@ simple mt on classroom based on hunchensocket demo.
   (let ((m (apply #'format nil message args)))
     (loop for peer in (hunchensocket:clients room)
        do (hunchensocket:send-text-message peer m))))
-
 ;; unuse variables user and message.
 ;; however,  Generic-function's definition is,
 ;; (HUNCHENSOCKET::RESOURCE
@@ -117,7 +116,7 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  (format t "~a MT ~a~%" (remote-addr*) tweet)
+;;  (format t "~a MT ~a~%" (remote-addr*) tweet)
   (when (and
          (< 40 (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
@@ -184,7 +183,7 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
-x
+
   ;; check before installation
   ;; (cond
   ;;   ((probe-file #p"/edu/")
