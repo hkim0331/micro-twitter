@@ -3,6 +3,8 @@ copyright (c) 2015-2017 Hiroshi Kimura.
 
 simple mt on classroom based on hunchensocket demo.
 
+* 2019-04-15: 20191 と 20192 使おうか。
+
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
 
 * 2016-05-23 CHANGED
@@ -30,8 +32,8 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *version* "3.3")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
-(defvar *http-port* 20154)
-(defvar *ws-port*   20155) ;; can not use same port.
+(defvar *http-port* 20191)
+(defvar *ws-port*   20192) ;; can not use same port.
 (defvar *my-addr*)
 (defvar *ws-uri*)
 (defvar *display-ip* nil)
@@ -39,16 +41,10 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *ws-server*)
 (defvar *kodama-1* "10.27.104.1")
 
-;;; no use
-;; (defvar *c-2b* "10.27.100.200")
-;; (defvar *c-2g* "10.27.102.200")
-
 (defmacro navi ()
   `(htm
     "[ "
-    (:a :href "http://literacy.melt.kyutech.ac.jp" "literacy")
-    " | "
-    (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
+    (:a :href "https://hcc.hkim.jp" "情報学演習")
     " || "
     (:a :href "/on" "on")
     " | "
@@ -67,7 +63,9 @@ simple mt on classroom based on hunchensocket demo.
        (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
        (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
        (:link :rel "stylesheet"
-              :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+              :href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              :integrity "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              :crossorigin "anonymous")
        (:link :rel "stylesheet" :href "/my.css")
        (:title "bulletin board system"))
       (:body
