@@ -46,4 +46,4 @@ ws://localhost:20155/bbs
 ```
 
 ---
-hkimura, 2017-04-22.
+hkimura, 2019-04-17.
