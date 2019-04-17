@@ -1,7 +1,9 @@
 #|
-copyright (c) 2015-2017 Hiroshi Kimura.
+copyright (c) 2015-2019 Hiroshi Kimura.
 
 simple mt on classroom based on hunchensocket demo.
+
+* 2019-04-15: 8000 と 8001 使おう。
 
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
 
@@ -30,25 +32,19 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *version* "3.3")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
-(defvar *http-port* 20154)
-(defvar *ws-port*   20155) ;; can not use same port.
-(defvar *my-addr*)
-(defvar *ws-uri*)
+(defvar *http-port* 8000)
+(defvar *ws-port*   8001) ;; can not use same port.
+(defvar *my-addr* "153.126.191.228")
+(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
-(defvar *kodama-1* "10.27.104.1")
-
-;;; no use
-;; (defvar *c-2b* "10.27.100.200")
-;; (defvar *c-2g* "10.27.102.200")
+;;(defvar *kodama-1* "10.27.104.1")
 
 (defmacro navi ()
   `(htm
     "[ "
-    (:a :href "http://literacy.melt.kyutech.ac.jp" "literacy")
-    " | "
-    (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
+    (:a :href "https://hcc.hkim.jp" "情報学演習")
     " || "
     (:a :href "/on" "on")
     " | "
@@ -67,7 +63,9 @@ simple mt on classroom based on hunchensocket demo.
        (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
        (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
        (:link :rel "stylesheet"
-              :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+              :href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              :integrity "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              :crossorigin "anonymous")
        (:link :rel "stylesheet" :href "/my.css")
        (:title "bulletin board system"))
       (:body
@@ -186,19 +184,19 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
-
+x
   ;; check before installation
-  (cond
-    ((probe-file #p"/edu/")
-     (setq *my-addr* *kodama-1*)
-     (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
-    ((probe-file #p"/home/hkim")
-     (setq *my-addr* "localhost")
-     (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
-    ;; when use 'localhost' instead of '127.0.0.1' with ccl,
-    ;; NOT WORK.
-    (t (setq *my-addr* "127.0.0.1")
-       (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
+  ;; (cond
+  ;;   ((probe-file #p"/edu/")
+  ;;    (setq *my-addr* *kodama-1*)
+  ;;    (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
+  ;;   ((probe-file #p"/home/hkim")
+  ;;    (setq *my-addr* "localhost")
+  ;;    (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
+  ;;   ;; when use 'localhost' instead of '127.0.0.1' with ccl,
+  ;;   ;; NOT WORK.
+  ;;   (t (setq *my-addr* "127.0.0.1")
+  ;;      (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
 
   (setf *http-server*
         (make-instance 'easy-acceptor
