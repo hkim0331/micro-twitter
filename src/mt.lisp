@@ -43,7 +43,7 @@ simple mt on classroom based on hunchensocket demo.
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.2")
+(defvar *version* "5.2.1")
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
