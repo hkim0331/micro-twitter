@@ -29,17 +29,32 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
+(defun my-getenv (name &optional default)
+    #+CMU
+    (let ((x (assoc name ext:*environment-list*
+                    :test #'string=)))
+      (if x (cdr x) default))
+    #-CMU
+    (or
+     #+Allegro (sys:getenv name)
+     #+CLISP (ext:getenv name)
+     #+ECL (si:getenv name)
+     #+SBCL (sb-unix::posix-getenv name)
+     #+LISPWORKS (lispworks:environment-variable name)
+     default))
+
 (defvar *version* "3.3")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 8000)
-(defvar *ws-port*   8001) ;; can not use same port.
-(defvar *my-addr* "153.126.191.228")
+(defvar *ws-port*   8001) ;; can not use same port with *http-port*
+;;(defvar *my-addr* "153.126.191.228")
+;;(defvar *my-addr* "127.0.0.1")
+(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
 (defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
-;;(defvar *kodama-1* "10.27.104.1")
 
 (defmacro navi ()
   `(htm
@@ -69,13 +84,13 @@ simple mt on classroom based on hunchensocket demo.
        (:link :rel "stylesheet" :href "/my.css")
        (:title "bulletin board system"))
       (:body
-       (:div :class "container"
-        (:h1 :class "page-header hidden-xs" "Micro Twitter for Hkimura Class")
-        (navi)
-        ,@body
-        (:hr)
-        (:span
-         (format t "programmed by hkimura, release ~a." *version*)))
+       :div :class "container"
+       (:h1 :class "page-header hidden-xs" "Micro Twitter for hkimura Classes")
+       (navi)
+       ,@body
+       (:hr)
+       (:span
+        (format t "programmed by hkimura, release ~a." *version*))
        (:script :src "/my.js")))))
 
 (defclass chat-room (hunchensocket:websocket-resource)
@@ -184,20 +199,6 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
-x
-  ;; check before installation
-  ;; (cond
-  ;;   ((probe-file #p"/edu/")
-  ;;    (setq *my-addr* *kodama-1*)
-  ;;    (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
-  ;;   ((probe-file #p"/home/hkim")
-  ;;    (setq *my-addr* "localhost")
-  ;;    (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
-  ;;   ;; when use 'localhost' instead of '127.0.0.1' with ccl,
-  ;;   ;; NOT WORK.
-  ;;   (t (setq *my-addr* "127.0.0.1")
-  ;;      (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
-
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
@@ -205,7 +206,7 @@ x
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
-                       :address *my-addr* :port *ws-port*))
+                     :address *my-addr* :port *ws-port*))
   (start *ws-server*)
   (format t "~a~%" *ws-uri*))
 
