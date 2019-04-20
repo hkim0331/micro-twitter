@@ -43,7 +43,7 @@ simple mt on classroom based on hunchensocket demo.
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.0")
+(defvar *version* "5.1")
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
@@ -187,11 +187,15 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
+
+  (format t "version: ~a" *version*)
+
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
   (start *http-server*)
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
+
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
                      :address *my-addr* :port *ws-port*))
