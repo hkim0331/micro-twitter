@@ -43,7 +43,7 @@ simple mt on classroom based on hunchensocket demo.
      #+LISPWORKS (lispworks:environment-variable name)
      default))
 
-(defvar *version* "3.3")
+(defvar *version* "4.1")
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *http-port* 8000)

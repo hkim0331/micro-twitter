@@ -45,5 +45,9 @@ websocket waits for connection at,
 ws://localhost:20155/bbs
 ```
 
+## ChangeLog
+
+* 2019-04-20 [4.1] define my-getenv
+
 ---
-hkimura, 2019-04-17.
+hkimura, 2019-04-20.
