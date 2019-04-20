@@ -128,7 +128,7 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-;;  (format t "~a MT ~a~%" (remote-addr*) tweet)
+  (format t "~a MT ~a~%" (remote-addr*) tweet)
   (when (and
          (< 40 (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
