@@ -8,7 +8,7 @@
 (in-package :mt-asd)
 
 (defsystem mt
-:version "4.0"
+:version "4.1"
   :author "hkimura"
   :license "free"
   :depends-on (:hunchentoot
