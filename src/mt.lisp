@@ -47,7 +47,7 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
+(defvar *ws-uri* "ws://mt.hkim.jp/mt") ;;
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -188,7 +188,7 @@ simple mt on classroom based on hunchensocket demo.
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
 
-  (format t "version: ~a" *version*)
+  (format t "version: ~a~%" *version*)
 
   (setf *http-server*
         (make-instance 'easy-acceptor
