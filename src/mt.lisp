@@ -29,10 +29,7 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
-<<<<<<< HEAD
 ;;http://cl-cookbook.sourceforge.net/os.html
-=======
->>>>>>> 65952756271aea6ad6a2e674b8c0ebc563e5e09f
 (defun my-getenv (name &optional default)
     #+CMU
     (let ((x (assoc name ext:*environment-list*
@@ -44,7 +41,6 @@ simple mt on classroom based on hunchensocket demo.
      #+CLISP (ext:getenv name)
      #+ECL (si:getenv name)
      #+SBCL (sb-unix::posix-getenv name)
-<<<<<<< HEAD
      #+LISPWORKS (lispworks:environment-variable name)))
 
 (defvar *version* "5.0")
@@ -54,18 +50,6 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
-=======
-     #+LISPWORKS (lispworks:environment-variable name)
-     default))
-
-(defvar *version* "4.1")
-(defvar *tweets* "")
-(defvar *tweet-max* 140)
-(defvar *http-port* 8000)
-(defvar *ws-port*   8001) ;; can not use same port with *http-port*
-(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
->>>>>>> 65952756271aea6ad6a2e674b8c0ebc563e5e09f
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
