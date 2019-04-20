@@ -29,7 +29,10 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
+<<<<<<< HEAD
 ;;http://cl-cookbook.sourceforge.net/os.html
+=======
+>>>>>>> 65952756271aea6ad6a2e674b8c0ebc563e5e09f
 (defun my-getenv (name &optional default)
     #+CMU
     (let ((x (assoc name ext:*environment-list*
@@ -41,6 +44,7 @@ simple mt on classroom based on hunchensocket demo.
      #+CLISP (ext:getenv name)
      #+ECL (si:getenv name)
      #+SBCL (sb-unix::posix-getenv name)
+<<<<<<< HEAD
      #+LISPWORKS (lispworks:environment-variable name)))
 
 (defvar *version* "5.0")
@@ -50,6 +54,18 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
+=======
+     #+LISPWORKS (lispworks:environment-variable name)
+     default))
+
+(defvar *version* "4.1")
+(defvar *tweets* "")
+(defvar *tweet-max* 140)
+(defvar *http-port* 8000)
+(defvar *ws-port*   8001) ;; can not use same port with *http-port*
+(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
+(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
+>>>>>>> 65952756271aea6ad6a2e674b8c0ebc563e5e09f
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
@@ -110,7 +126,6 @@ simple mt on classroom based on hunchensocket demo.
   (let ((m (apply #'format nil message args)))
     (loop for peer in (hunchensocket:clients room)
        do (hunchensocket:send-text-message peer m))))
-
 ;; unuse variables user and message.
 ;; however,  Generic-function's definition is,
 ;; (HUNCHENSOCKET::RESOURCE
@@ -129,9 +144,9 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  (format t "~a MT ~a~%" (remote-addr*) tweet)
+;;  (format t "~a MT ~a~%" (remote-addr*) tweet)
   (when (and
-         (< (length tweet) *tweet-max*)
+         (< 40 (length tweet) *tweet-max*)
          (cl-ppcre:scan "\\S" tweet)
          (not (cl-ppcre:scan "(.)\\1{4,}$" tweet))
          (not (cl-ppcre:scan "おっぱい" tweet)))
@@ -191,19 +206,6 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
-  ;; check before installation
-  ;; (cond
-  ;;   ((probe-file #p"/edu/")
-  ;;    (setq *my-addr* *kodama-1*)
-  ;;    (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
-  ;;   ((probe-file #p"/home/hkim")
-  ;;    (setq *my-addr* "localhost")
-  ;;    (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
-  ;;   ;; when use 'localhost' instead of '127.0.0.1' with ccl,
-  ;;   ;; NOT WORK.
-  ;;   (t (setq *my-addr* "127.0.0.1")
-  ;;      (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
-
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
@@ -211,7 +213,7 @@ simple mt on classroom based on hunchensocket demo.
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
-                       :address *my-addr* :port *ws-port*))
+                     :address *my-addr* :port *ws-port*))
   (start *ws-server*)
   (format t "~a~%" *ws-uri*))
 
