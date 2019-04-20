@@ -29,29 +29,41 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
-(defvar *version* "3.3")
+;;http://cl-cookbook.sourceforge.net/os.html
+(defun my-getenv (name &optional default)
+    #+CMU
+    (let ((x (assoc name ext:*environment-list*
+                    :test #'string=)))
+      (if x (cdr x) default))
+    #-CMU
+    (or
+     #+Allegro (sys:getenv name)
+     #+CLISP (ext:getenv name)
+     #+ECL (si:getenv name)
+     #+SBCL (sb-unix::posix-getenv name)
+     #+LISPWORKS (lispworks:environment-variable name)))
+
+(defvar *version* "5.0")
+(defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
+(defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
+(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
+(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
-(defvar *http-port* 8000)
-(defvar *ws-port*   8001) ;; can not use same port.
-(defvar *my-addr* "127.0.0.1")
-(defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
-;;(defvar *kodama-1* "10.27.104.1")
 
 (defmacro navi ()
   `(htm
-    "[ "
-    (:a :href "https://hcc.hkim.jp" "情報学演習")
-    " || "
-    (:a :href "/on" "on")
-    " | "
-    (:a :href "/off" "off")
-    " | "
-    (:a :href "/reset" "reset")
-    " ]"))
+    (:p
+     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary" "情報学演習")
+     " | "
+     (:a :href "/on" :class "btn btn-outline-primary" "on")
+     " | "
+     (:a :href "/off" :class "btn btn-outline-primary" "off")
+     " | "
+     (:a :href "/reset" :class "btn btn-danger" "reset"))))
 
 (defmacro standard-page (&body body)
   `(with-html-output-to-string
@@ -63,14 +75,14 @@ simple mt on classroom based on hunchensocket demo.
        (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
        (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
        (:link :rel "stylesheet"
-              :href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              :href "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
               :integrity "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
               :crossorigin "anonymous")
        (:link :rel "stylesheet" :href "/my.css")
        (:title "bulletin board system"))
       (:body
        (:div :class "container"
-        (:h1 :class "page-header hidden-xs" "Micro Twitter for Hkimura Class")
+        (:h2 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
         (navi)
         ,@body
         (:hr)
@@ -138,12 +150,7 @@ simple mt on classroom based on hunchensocket demo.
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
-           ;; (:textarea :id "tweet" :name "tweet" :placeholder "つぶやいてね"
-           ;;            :rows 5 :cols 60)
-           ;; (:br)
-           ;; (:input :type "submit")
-
-    (:h3 "Messages")
+    (:h3 "messages")
     (:div :id "timeline")))
 
 (defun auth? ()

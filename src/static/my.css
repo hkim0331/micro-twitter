@@ -1,5 +1,5 @@
 body { font-family: sans-serif; background: lightyellow}
-h2,h3 { color: red;}
+h2,h3 { color: black;}
 input#tweet { font-size: large; width: 100%;}
 div#timeline { color: navy;}
 div#timeline hr { margin-top: 5px; margin-bottom: 5px;}

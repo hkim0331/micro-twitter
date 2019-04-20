@@ -36,14 +36,18 @@ $ make restart
 then open uri,
 
 ```
-http://localhost:20154/index
+http://localhost:8000/
 ```
 
 websocket waits for connection at,
 
 ```
-ws://localhost:20155/bbs
+ws://localhost:8001/mt
 ```
 
+## ChangeLog
+
+* 2019-04-20 [5.0] cancel 4.*, restart from 5.0
+
 ---
-hkimura, 2017-04-22.
+hkimura, 2019-04-20.
