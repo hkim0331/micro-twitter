@@ -138,7 +138,7 @@ simple mt on classroom based on hunchensocket demo.
                         (cl-ppcre:scan "おっぱい" tweet))
                     "長すぎるか、禁止ワードを含むメッセージです。"
                     (escape-string tweet))
-                ))
+                *tweets*))
   (redirect "/"))
 
 (define-easy-handler (index :uri "/") ()
