@@ -34,7 +34,7 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *tweet-max* 140)
 (defvar *http-port* 8000)
 (defvar *ws-port*   8001) ;; can not use same port.
-(defvar *my-addr* "153.126.191.228")
+(defvar *my-addr* "127.0.0.1")
 (defvar *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))
 (defvar *display-ip* nil)
 (defvar *http-server*)
@@ -184,7 +184,6 @@ simple mt on classroom based on hunchensocket demo.
          "/my.css" "static/my.css") *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
-x
   ;; check before installation
   ;; (cond
   ;;   ((probe-file #p"/edu/")
