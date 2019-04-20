@@ -128,20 +128,17 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  (format t "~a MT ~a~%" (remote-addr*) tweet)
-  (when (and
-         (< 40 (length tweet) *tweet-max*)
-         (cl-ppcre:scan "\\S" tweet)
-         (not (cl-ppcre:scan "(.)\\1{4,}$" tweet))
-         (not (cl-ppcre:scan "おっぱい" tweet)))
-    (setf *tweets*
-          (format
-           nil
-           "<span><span class=\"time\">~a[~a]</span> ~a</span><hr>~a"
-           (now)
-           (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-           (escape-string tweet)
-           *tweets*)))
+  ;;(format t "~a MT ~a~%" (remote-addr*) tweet)
+  (setf *tweets*
+        (format nil "<span><span class=\"time\">~a[~a]</span> ~a</span><hr>~a"
+                (now)
+                (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
+                (if (or (< *tweet-max* (length tweet))
+                        (cl-ppcre:scan "(.)\\1{4,}$" tweet)
+                        (cl-ppcre:scan "おっぱい" tweet))
+                    "長すぎるか、禁止ワードを含むメッセージです。"
+                    (escape-string tweet))
+                ))
   (redirect "/"))
 
 (define-easy-handler (index :uri "/") ()
