@@ -15,5 +15,6 @@ exec ros -Q -- $0 "$@"
 (defun main (&rest argv)
   (declare (ignorable argv))
   (mt::start-server)
-  (sleep 100))
+  (loop
+     do (sleep 10)))
 ;;; vim: set ft=lisp lisp:

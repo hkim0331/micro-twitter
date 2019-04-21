@@ -67,8 +67,13 @@ ws://localhost:8001/mt
 
 * 2019-04-20 [4.1] define my-getenv
 * 2019-04-20 [5.0] cancel 4.*, restart from 5.0
-* 2019-04-20 [5.2.1] ws-uri は ws://127.0.0.1/mt などじゃダメ。外に見せるwsのアドレスじゃなくちゃ。
-  ws://mt.hkim.jp/mt が正しい。
+* 2019-04-20 [5.2.1] ws-uri は ws://127.0.0.1/mt などじゃダメ。
+  外に見せる ws のアドレスじゃなくちゃ。 ws://mt.hkim.jp/mt が正しい。
+* 2019-04-21 [5.3]
+  * roswell script
+  * real-remote-addr
+  * (fish) set -x MT_DEBUG ws://127.0.0.1/ws
+  * tweets のフォーマット変更。メッセージよりも tweets にするか。
 
 ---
-hkimura, 2019-04-20.
+hkimura, 2019-04-21.
