@@ -43,13 +43,11 @@ simple mt on classroom based on hunchensocket demo.
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.2.1")
+(defvar *version* "5.3")
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-;;(defvar *ws-uri* "ws://mt.hkim.jp/mt") ;;
-;;(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt")) ;;
-(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt")) ;;
+(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -59,13 +57,13 @@ simple mt on classroom based on hunchensocket demo.
 (defmacro navi ()
   `(htm
     (:p
-     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary" "情報学演習")
+     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary btn-sm" "情報学演習")
      " | "
-     (:a :href "/on" :class "btn btn-outline-primary" "on")
+     (:a :href "/on" :class "btn btn-outline-primary btn-sm" "on")
      " | "
-     (:a :href "/off" :class "btn btn-outline-primary" "off")
+     (:a :href "/off" :class "btn btn-outline-primary btn-sm" "off")
      " | "
-     (:a :href "/reset" :class "btn btn-danger" "reset"))))
+     (:a :href "/reset" :class "btn btn-danger btn-sm" "reset"))))
 
 (defmacro standard-page (&body body)
   `(with-html-output-to-string
@@ -84,10 +82,9 @@ simple mt on classroom based on hunchensocket demo.
        (:title "bulletin board system"))
       (:body
        (:div :class "container"
-        (:h2 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
+        (:h3 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
         (navi)
         ,@body
-        (:hr)
         (:span
          (format t "programmed by hkimura, release ~a." *version*)))
        (:script :src "/my.js")))))
@@ -130,16 +127,15 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  ;;(format t "~a MT ~a~%" (remote-addr*) tweet)
   (setf *tweets*
-        (format nil "<span><span class=\"time\">~a</span> ~a</span><span> from ~a</span><hr>~a"
+        (format nil "<span><span class='time'>from ~a, at ~a,</span><br> ~a</span><hr>~a"
+                (real-remote-addr)
                 (now)
-		(if (or (< *tweet-max* (length tweet))
+                (if (or (< *tweet-max* (length tweet))
                         (cl-ppcre:scan "(.)\\1{4,}$" tweet)
                         (cl-ppcre:scan "おっぱい" tweet))
                     "長すぎるか、禁止ワードを含むメッセージです。"
-		  (escape-string tweet))
-		(real-remote-addr)
+                    (escape-string tweet))
                 *tweets*))
   (redirect "/"))
 
@@ -148,7 +144,7 @@ simple mt on classroom based on hunchensocket demo.
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
-    (:h3 "メッセージ")
+    (:h3 "your tweets")
     (:div :id "timeline")))
 
 (defun auth? ()
