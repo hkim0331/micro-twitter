@@ -132,14 +132,14 @@ simple mt on classroom based on hunchensocket demo.
 (define-easy-handler (submit :uri "/submit") (tweet)
   ;;(format t "~a MT ~a~%" (remote-addr*) tweet)
   (setf *tweets*
-        (format nil "<span><span class=\"time\">~a[~a]</span> ~a</span><hr>~a"
+        (format nil "<span><span class=\"time\">~a</span> ~a</span><span> from ~a</span><hr>~a"
                 (now)
-                (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-                (if (or (< *tweet-max* (length tweet))
+		(if (or (< *tweet-max* (length tweet))
                         (cl-ppcre:scan "(.)\\1{4,}$" tweet)
                         (cl-ppcre:scan "おっぱい" tweet))
                     "長すぎるか、禁止ワードを含むメッセージです。"
-                    (escape-string tweet))
+		  (escape-string tweet))
+		(real-remote-addr)
                 *tweets*))
   (redirect "/"))
 
@@ -148,7 +148,7 @@ simple mt on classroom based on hunchensocket demo.
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
-    (:h3 "messages")
+    (:h3 "メッセージ")
     (:div :id "timeline")))
 
 (defun auth? ()
