@@ -47,7 +47,9 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* "ws://mt.hkim.jp/mt") ;;
+;;(defvar *ws-uri* "ws://mt.hkim.jp/mt") ;;
+;;(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt")) ;;
+(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt")) ;;
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
