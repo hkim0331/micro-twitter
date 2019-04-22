@@ -1,0 +1,13 @@
+[Unit]
+Description = micro twitter for hkimura classes
+
+[Service]
+WorkingDirectory = /srv/micro-twitter
+ExecStart = /srv/micro-twitter/mt
+Restart = always
+TimeoutSec = 300
+Type = simple
+User = hkim
+
+[Install]
+WantedBy = multi-user.target

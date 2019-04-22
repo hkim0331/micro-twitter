@@ -1,7 +1,9 @@
 #|
-copyright (c) 2015-2017 Hiroshi Kimura.
+copyright (c) 2015-2019 Hiroshi Kimura.
 
 simple mt on classroom based on hunchensocket demo.
+
+* 2019-04-15: 8000 と 8001 使おう。
 
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
 
@@ -27,35 +29,41 @@ simple mt on classroom based on hunchensocket demo.
   (:use :cl :hunchentoot :cl-who :cl-ppcre))
 (in-package :mt)
 
-(defvar *version* "3.3")
+;;http://cl-cookbook.sourceforge.net/os.html
+(defun my-getenv (name &optional default)
+    #+CMU
+    (let ((x (assoc name ext:*environment-list*
+                    :test #'string=)))
+      (if x (cdr x) default))
+    #-CMU
+    (or
+     #+Allegro (sys:getenv name)
+     #+CLISP (ext:getenv name)
+     #+ECL (si:getenv name)
+     #+SBCL (sb-unix::posix-getenv name)
+     #+LISPWORKS (lispworks:environment-variable name)))
+
+(defvar *version* "5.3")
+(defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
+(defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
+(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
+(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
-(defvar *http-port* 20154)
-(defvar *ws-port*   20155) ;; can not use same port.
-(defvar *my-addr*)
-(defvar *ws-uri*)
 (defvar *display-ip* nil)
 (defvar *http-server*)
 (defvar *ws-server*)
-(defvar *kodama-1* "10.27.104.1")
-
-;;; no use
-;; (defvar *c-2b* "10.27.100.200")
-;; (defvar *c-2g* "10.27.102.200")
 
 (defmacro navi ()
   `(htm
-    "[ "
-    (:a :href "http://literacy.melt.kyutech.ac.jp" "literacy")
-    " | "
-    (:a :href "http://www.melt.kyutech.ac.jp" "hkimura labo.")
-    " || "
-    (:a :href "/on" "on")
-    " | "
-    (:a :href "/off" "off")
-    " | "
-    (:a :href "/reset" "reset")
-    " ]"))
+    (:p
+     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary btn-sm" "情報学演習")
+     " | "
+     (:a :href "/on" :class "btn btn-outline-primary btn-sm" "on")
+     " | "
+     (:a :href "/off" :class "btn btn-outline-primary btn-sm" "off")
+     " | "
+     (:a :href "/reset" :class "btn btn-danger btn-sm" "reset"))))
 
 (defmacro standard-page (&body body)
   `(with-html-output-to-string
@@ -67,15 +75,16 @@ simple mt on classroom based on hunchensocket demo.
        (:meta :http-equiv "X-UA-Compatible" :content "IE=edge")
        (:meta :name "viewport" :content "width=device-width, initial-scale=1.0")
        (:link :rel "stylesheet"
-              :href "//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css")
+              :href "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              :integrity "sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              :crossorigin "anonymous")
        (:link :rel "stylesheet" :href "/my.css")
        (:title "bulletin board system"))
       (:body
        (:div :class "container"
-        (:h1 :class "page-header hidden-xs" "Micro Twitter for Hkimura Class")
+        (:h3 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
         (navi)
         ,@body
-        (:hr)
         (:span
          (format t "programmed by hkimura, release ~a." *version*)))
        (:script :src "/my.js")))))
@@ -100,7 +109,6 @@ simple mt on classroom based on hunchensocket demo.
   (let ((m (apply #'format nil message args)))
     (loop for peer in (hunchensocket:clients room)
        do (hunchensocket:send-text-message peer m))))
-
 ;; unuse variables user and message.
 ;; however,  Generic-function's definition is,
 ;; (HUNCHENSOCKET::RESOURCE
@@ -119,20 +127,16 @@ simple mt on classroom based on hunchensocket demo.
     (format nil "~2,'0d:~2,'0d:~2,'0d" hour minute second)))
 
 (define-easy-handler (submit :uri "/submit") (tweet)
-  (format t "~a MT ~a~%" (remote-addr*) tweet)
-  (when (and
-         (< 40 (length tweet) *tweet-max*)
-         (cl-ppcre:scan "\\S" tweet)
-         (not (cl-ppcre:scan "(.)\\1{4,}$" tweet))
-         (not (cl-ppcre:scan "おっぱい" tweet)))
-    (setf *tweets*
-          (format
-           nil
-           "<span><span class=\"time\">~a[~a]</span> ~a</span><hr>~a"
-           (now)
-           (cl-ppcre:scan-to-strings "[0-9]*$" (remote-addr*))
-           (escape-string tweet)
-           *tweets*)))
+  (setf *tweets*
+        (format nil "<span><span class='time'>from ~a, at ~a,</span><br> ~a</span><hr>~a"
+                (real-remote-addr)
+                (now)
+                (if (or (< *tweet-max* (length tweet))
+                        (cl-ppcre:scan "(.)\\1{4,}$" tweet)
+                        (cl-ppcre:scan "おっぱい" tweet))
+                    "長すぎるか、禁止ワードを含むメッセージです。"
+                    (escape-string tweet))
+                *tweets*))
   (redirect "/"))
 
 (define-easy-handler (index :uri "/") ()
@@ -140,12 +144,7 @@ simple mt on classroom based on hunchensocket demo.
     (:form :action "/submit"  :method "post"
            (:input :id "ws" :type "hidden" :value *ws-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
-           ;; (:textarea :id "tweet" :name "tweet" :placeholder "つぶやいてね"
-           ;;            :rows 5 :cols 60)
-           ;; (:br)
-           ;; (:input :type "submit")
-
-    (:h3 "Messages")
+    (:h3 "your tweets")
     (:div :id "timeline")))
 
 (defun auth? ()
@@ -187,27 +186,17 @@ simple mt on classroom based on hunchensocket demo.
   (push (create-static-file-dispatcher-and-handler
          "/my.js"  "static/my.js") *dispatch-table*)
 
-  ;; check before installation
-  (cond
-    ((probe-file #p"/edu/")
-     (setq *my-addr* *kodama-1*)
-     (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*)))
-    ((probe-file #p"/home/hkim")
-     (setq *my-addr* "localhost")
-     (setq *ws-uri* (format nil "ws://mt.melt.kyutech.ac.jp/mt")))
-    ;; when use 'localhost' instead of '127.0.0.1' with ccl,
-    ;; NOT WORK.
-    (t (setq *my-addr* "127.0.0.1")
-       (setq *ws-uri* (format nil "ws://~a:~a/mt" *my-addr* *ws-port*))))
+  (format t "version: ~a~%" *version*)
 
   (setf *http-server*
         (make-instance 'easy-acceptor
                        :address *my-addr* :port *http-port*))
   (start *http-server*)
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
+
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
-                       :address *my-addr* :port *ws-port*))
+                     :address *my-addr* :port *ws-port*))
   (start *ws-server*)
   (format t "~a~%" *ws-uri*))
 
