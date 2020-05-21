@@ -1,0 +1,15 @@
+[Unit]
+Description=MicroTwitter for hkimura classes
+
+[Service]
+WorkingDirectory=/srv/wse
+Environment=MT_WD=/srv/wse
+Environment=MT_ADDR=127.0.0.1
+Environment=MT_HTTP=3005
+Environment=MT_WS=3006
+ExecStart=/srv/wse/mt
+Type=simple
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
