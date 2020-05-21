@@ -194,14 +194,21 @@ simple mt on classroom based on hunchensocket demo.
          "/my.js"
          (format nil "~a/static/my.js" *ws-wd*))
         *dispatch-table*)
-  (format t "version: ~a~%" *version*)
 
-  (setf *http-server* (make-instance 'easy-acceptor))
+  (setf *http-server*
+        (make-instance 'easy-acceptor
+                       :address *my-addr*
+                       :port *http-port*))
   (start *http-server*)
-  (format t "http://~a:~d/~%" *my-addr* *http-port*)
 
-  (setf *ws-server*  (make-instance 'hunchensocket:websocket-acceptor))
+  (setf *ws-server*
+        (make-instance 'hunchensocket:websocket-acceptor
+                       :address *my-addr*
+                       :port *ws-port*))
   (start *ws-server*)
+
+  (format t "version: ~a~%" *version*)
+  (format t "http://~a:~d/~%" *my-addr* *http-port*)
   (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
