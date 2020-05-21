@@ -3,6 +3,8 @@ copyright (c) 2015-2019 Hiroshi Kimura.
 
 simple mt on classroom based on hunchensocket demo.
 
+* 2020-05-21: getenv "HOME"
+
 * 2019-04-15: 8000 と 8001 使おう。
 
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
@@ -38,6 +40,7 @@ simple mt on classroom based on hunchensocket demo.
     #-CMU
     (or
      #+Allegro (sys:getenv name)
+     #+CCL (ccl:getenv name)
      #+CLISP (ext:getenv name)
      #+ECL (si:getenv name)
      #+SBCL (sb-unix::posix-getenv name)
@@ -49,6 +52,8 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
 ;(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
 (defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt"))
+;2020-05-21
+(defvar *ws-wd* (or (my-getenv "MT_WD") "/Users/hkim/common-lisp/mt"))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -177,25 +182,25 @@ simple mt on classroom based on hunchensocket demo.
 
 (defun start-server ()
   (setf (html-mode) :html5)
-
   (push (create-static-file-dispatcher-and-handler
-         "/robots.txt" "static/robots.txt") *dispatch-table*)
+         "/robots.txt"
+         (format nil "~a/static/robots.txt" *ws-wd*)
+         *dispatch-table*))
   (push (create-static-file-dispatcher-and-handler
-         "/my.css" "static/my.css") *dispatch-table*)
+         "/my.css"
+         (format nil "~a/static/my.css" *ws-wd*)
+         *dispatch-table*))
   (push (create-static-file-dispatcher-and-handler
-         "/my.js"  "static/my.js") *dispatch-table*)
-
+         "/my.js"
+         (format nil "~a/static/my.js" *ws-wd*)
+         *dispatch-table*))
   (format t "version: ~a~%" *version*)
-
   (setf *http-server*
-        (make-instance 'easy-acceptor
-                       :address *my-addr* :port *http-port*))
+        (make-instance 'easy-acceptor))
   (start *http-server*)
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
-
   (setf *ws-server*
-        (make-instance 'hunchensocket:websocket-acceptor
-                     :address *my-addr* :port *ws-port*))
+        (make-instance 'hunchensocket:websocket-acceptor))
   (start *ws-server*)
   (format t "~a~%" *ws-uri*))
 
