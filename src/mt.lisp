@@ -47,12 +47,14 @@ simple mt on classroom based on hunchensocket demo.
      #+LISPWORKS (lispworks:environment-variable name)))
 
 (defvar *version* "5.4")
-(defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
-(defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
-(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt"))
-;2020-05-21
-(defvar *ws-wd* (or (my-getenv "MT_WD") "/Users/hkim/common-lisp/mt"))
+;;
+;; これだとコンパイル時に決定する、か？
+;;
+(defvar *http-port* 8000)
+(defvar *ws-port*   8001) ;; can not use same port with http.
+(defvar *my-addr*   "127.0.0.1")
+(defvar *ws-uri*    "ws://127.0.0.1:8001/mt")
+(defvar *ws-wd*     "/Users/hkim/common-lisp/mt")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -214,7 +216,27 @@ simple mt on classroom based on hunchensocket demo.
 (defun stop-server ()
   (format t "~a~%~a" (stop *http-server*) (stop *ws-server*)))
 
+;;https://stevelosh.com/blog/2018/07/fun-with-macros-if-let/
+(defmacro when-let (binding &body body)
+  (destructuring-bind ((symbol value)) binding
+    `(let ((,symbol ,value))
+      (when ,symbol
+        ,@body))))
+
+(defun init-constants ()
+  (when-let ((port (my-getenv "MT_HTTP")))
+    (setf *http-port* port))
+  (when-let ((port (my-getenv "MT_WS")))
+    (setf *ws-port* port))
+  (when-let ((addr (my-getenv "MT_ADDR")))
+    (setf *my-addr* addr))
+  (when-let ((uri (my-getenv "MT_URI")))
+    (setf *ws-uri* uri))
+  (when-let ((wd (my-getenv "MT_WD")))
+    (setf *wd-wd* wd)))
+
 ;; when production(sbcl), use this main defined.
 (defun main ()
+  (init-constants)
   (start-server)
   (loop (sleep 60)))
