@@ -50,10 +50,10 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-;(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
 (defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt"))
 ;2020-05-21
 (defvar *ws-wd* (or (my-getenv "MT_WD") "/Users/hkim/common-lisp/mt"))
+
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -184,23 +184,23 @@ simple mt on classroom based on hunchensocket demo.
   (setf (html-mode) :html5)
   (push (create-static-file-dispatcher-and-handler
          "/robots.txt"
-         (format nil "~a/static/robots.txt" *ws-wd*)
-         *dispatch-table*))
+         (format nil "~a/static/robots.txt" *ws-wd*))
+        *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.css"
-         (format nil "~a/static/my.css" *ws-wd*)
-         *dispatch-table*))
+         (format nil "~a/static/my.css" *ws-wd*))
+        *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"
-         (format nil "~a/static/my.js" *ws-wd*)
-         *dispatch-table*))
+         (format nil "~a/static/my.js" *ws-wd*))
+        *dispatch-table*)
   (format t "version: ~a~%" *version*)
-  (setf *http-server*
-        (make-instance 'easy-acceptor))
+
+  (setf *http-server* (make-instance 'easy-acceptor))
   (start *http-server*)
   (format t "http://~a:~d/~%" *my-addr* *http-port*)
-  (setf *ws-server*
-        (make-instance 'hunchensocket:websocket-acceptor))
+
+  (setf *ws-server*  (make-instance 'hunchensocket:websocket-acceptor))
   (start *ws-server*)
   (format t "~a~%" *ws-uri*))
 
