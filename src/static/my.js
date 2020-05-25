@@ -3,7 +3,7 @@ var output;
 function init() {
     ws = document.getElementById("ws").value;
     output = document.getElementById("timeline");
-//    testWebSocket(ws);
+    testWebSocket(ws);
 }
 
 function testWebSocket(ws) {
