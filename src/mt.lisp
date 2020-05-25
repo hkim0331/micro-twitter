@@ -46,7 +46,7 @@ simple mt on classroom based on hunchensocket demo.
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.4")
+(defvar *version* "5.4.1")
 ;;
 ;; これだとコンパイル時に決定する、か？
 ;;
