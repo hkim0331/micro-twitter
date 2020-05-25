@@ -93,4 +93,4 @@ ws://localhost:8001/mt
   * tweets のフォーマット変更。メッセージよりも tweets にするか。
 
 ---
-hkimura, 2020-05-21.
+hkimura, 2020-05-25.
