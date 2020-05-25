@@ -3,7 +3,7 @@ var output;
 function init() {
     ws = document.getElementById("ws").value;
     output = document.getElementById("timeline");
-    testWebSocket(ws);
+//    testWebSocket(ws);
 }
 
 function testWebSocket(ws) {
@@ -20,7 +20,7 @@ function onOpen(evt) {
 }
 
 function onClose(evt) {
-    writeToScreen("再接続はページを再読みしてください。");
+    writeToScreen("onClose: 再接続はページを再読みしてください。");
 }
 
 function onMessage(evt) {

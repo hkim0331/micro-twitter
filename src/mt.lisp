@@ -47,7 +47,8 @@ simple mt on classroom based on hunchensocket demo.
 (defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
 (defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
 (defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
+;(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
+(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://127.0.0.1:8001/mt"))
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -57,8 +58,6 @@ simple mt on classroom based on hunchensocket demo.
 (defmacro navi ()
   `(htm
     (:p
-     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary btn-sm" "情報学演習")
-     " | "
      (:a :href "/on" :class "btn btn-outline-primary btn-sm" "on")
      " | "
      (:a :href "/off" :class "btn btn-outline-primary btn-sm" "off")
@@ -82,7 +81,7 @@ simple mt on classroom based on hunchensocket demo.
        (:title "bulletin board system"))
       (:body
        (:div :class "container"
-        (:h3 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
+        (:h3 :class "page-header hidden-xs" "Websocket example")
         (navi)
         ,@body
         (:span
