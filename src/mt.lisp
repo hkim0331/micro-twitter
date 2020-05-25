@@ -50,11 +50,11 @@ simple mt on classroom based on hunchensocket demo.
 ;;
 ;; これだとコンパイル時に決定する、か？
 ;;
-(defvar *http-port* 8000)
-(defvar *ws-port*   8001) ;; can not use same port with http.
-(defvar *my-addr*   "127.0.0.1")
-(defvar *ws-uri*    "ws://127.0.0.1:8001/mt")
-(defvar *ws-wd*     "/Users/hkim/common-lisp/mt")
+(defvar *mt-http* 8000)
+(defvar *mt-ws*   8001) ;; can not use same port with http.
+(defvar *mt-addr* "127.0.0.1")
+(defvar *mt-uri*  "ws://127.0.0.1:8001/mt")
+(defvar *mt-wd*   "/Users/hkim/common-lisp/mt")
 
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
@@ -148,7 +148,7 @@ simple mt on classroom based on hunchensocket demo.
 (define-easy-handler (index :uri "/") ()
   (standard-page
     (:form :action "/submit"  :method "post"
-           (:input :id "ws" :type "hidden" :value *ws-uri*)
+           (:input :id "ws" :type "hidden" :value *mt-uri*)
            (:input :id "tweet" :name "tweet" :placeholder "つぶやいてね"))
     (:h3 "your tweets")
     (:div :id "timeline")))
@@ -186,35 +186,35 @@ simple mt on classroom based on hunchensocket demo.
   (setf (html-mode) :html5)
   (push (create-static-file-dispatcher-and-handler
          "/robots.txt"
-         (format nil "~a/static/robots.txt" *ws-wd*))
+         (format nil "~a/static/robots.txt" *mt-wd*))
         *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.css"
-         (format nil "~a/static/my.css" *ws-wd*))
+         (format nil "~a/static/my.css" *mt-wd*))
         *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
          "/my.js"
-         (format nil "~a/static/my.js" *ws-wd*))
+         (format nil "~a/static/my.js" *mt-wd*))
         *dispatch-table*)
 
   (setf *http-server*
         (make-instance 'easy-acceptor
-                       :address *my-addr*
-                       :port *http-port*))
+                       :address *mt-addr*
+                       :port *mt-http*))
   (start *http-server*)
 
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
-                       :address *my-addr*
-                       :port *ws-port*))
+                       :address *mt-addr*
+                       :port *mt-ws*))
   (start *ws-server*)
 
   (format t "version: ~a~%" *version*)
-  (format t "http://~a:~d/~%" *my-addr* *http-port*)
-  (format t "~a~%" *ws-uri*))
+  (format t "http://~a:~d/~%" *mt-addr* *mt-http*)
+  (format t "~a~%" *mt-uri*))
 
 (defun stop-server ()
-  (format t "~a~%~a" (stop *http-server*) (stop *ws-server*)))
+  (format t "~a~%~a" (stop *mt-http*) (stop *mt-ws*)))
 
 ;;https://stevelosh.com/blog/2018/07/fun-with-macros-if-let/
 (defmacro when-let (binding &body body)
@@ -225,22 +225,22 @@ simple mt on classroom based on hunchensocket demo.
 
 (defun init-constants ()
   (when-let ((port (my-getenv "MT_HTTP")))
-    (setf *http-port* (parse-integer port)))
+    (setf *mt-http* (parse-integer port)))
   (when-let ((port (my-getenv "MT_WS")))
-    (setf *ws-port* (parse-integer port)))
+    (setf *mt-ws* (parse-integer port)))
   (when-let ((addr (my-getenv "MT_ADDR")))
-    (setf *my-addr* addr))
+    (setf *mt-addr* addr))
   (when-let ((uri (my-getenv "MT_URI")))
-    (setf *ws-uri* uri))
+    (setf *mt-uri* uri))
   (when-let ((wd (my-getenv "MT_WD")))
-    (setf *wd-wd* wd)))
+    (setf *mt-wd* wd)))
 
 (defun display-constants ()
-  (format t "*http-port* ~a~%" *http-port*)
-  (format t "*ws-port* ~a~%" *ws-port*)
-  (format t "*my-addr* ~a~%" *my-addr*)
-  (format t "*ws-uri* ~a~%" *ws-uri*)
-  (format t "*wd-wd* ~a~%" *ws-wd*))
+  (format t "*mt-http* ~a~%" *mt-http*)
+  (format t "*mt-ws* ~a~%"   *mt-ws*)
+  (format t "*mt-addr* ~a~%" *mt-addr*)
+  (format t "*mt-uri* ~a~%"  *mt-uri*)
+  (format t "*mt-wd* ~a~%"   *mt-wd*))
 
 ;; when production(sbcl), use this main defined.
 (defun main ()
