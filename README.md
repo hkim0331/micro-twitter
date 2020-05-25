@@ -2,6 +2,23 @@
 
 A small twitter like app for hkimura class.
 
+## [5.4] - 2020-05-21
+* (ccl:getenv) を利用可能に。
+* MT_WD 環境変数の導入。systemd で環境変数を与えて起動させる。
+
+## 2020-05-15
+
+ws://127.0.0.1:8001/ws に変更。
+
+$ ros build mt.ros
+
+
+## NOTE
+
+MT_DEBUG=ws://127.0.0.1/ws when debug.
+(in fish, set -x MT_DEBUG ws://127.0.0.1/ws)
+
+
 ## TODO
 
 * keep log
@@ -76,4 +93,4 @@ ws://localhost:8001/mt
   * tweets のフォーマット変更。メッセージよりも tweets にするか。
 
 ---
-hkimura, 2019-04-21.
+hkimura, 2020-05-21.

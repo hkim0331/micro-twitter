@@ -1,0 +1,17 @@
+[Unit]
+Description=MicroTwitter for hkimura classes
+After=network-online.target
+
+[Service]
+WorkingDirectory=/srv/wse
+ExecStart=/srv/wse/mt
+Environment=MT_WD=/srv/wse
+Environment=MT_ADDR=127.0.0.1
+Environment=MT_HTTP=3005
+Environment=MT_WS=3006
+Environment=MT_URI=ws://wse.melt.kyutech.ac.jp/mt
+Type=simple
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target

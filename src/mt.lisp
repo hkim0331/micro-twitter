@@ -3,6 +3,8 @@ copyright (c) 2015-2019 Hiroshi Kimura.
 
 simple mt on classroom based on hunchensocket demo.
 
+* 2020-05-21: getenv "HOME"
+
 * 2019-04-15: 8000 と 8001 使おう。
 
 * 2016-05-23: CHANGED 使用ポートはデフォルトで 20154 と 20155。
@@ -38,16 +40,22 @@ simple mt on classroom based on hunchensocket demo.
     #-CMU
     (or
      #+Allegro (sys:getenv name)
+     #+CCL (ccl:getenv name)
      #+CLISP (ext:getenv name)
      #+ECL (si:getenv name)
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.3")
-(defvar *http-port* (or (my-getenv "MT_HTTP") 8000))
-(defvar *ws-port* (or (my-getenv "MT_WS") 8001)) ;; can not use same port with http.
-(defvar *my-addr* (or (my-getenv "MT_ADDR") "127.0.0.1"))
-(defvar *ws-uri* (or (my-getenv "MT_DEBUG") "ws://mt.hkim.jp/mt"))
+(defvar *version* "5.4")
+;;
+;; これだとコンパイル時に決定する、か？
+;;
+(defvar *http-port* 8000)
+(defvar *ws-port*   8001) ;; can not use same port with http.
+(defvar *my-addr*   "127.0.0.1")
+(defvar *ws-uri*    "ws://127.0.0.1:8001/mt")
+(defvar *ws-wd*     "/Users/hkim/common-lisp/mt")
+
 (defvar *tweets* "")
 (defvar *tweet-max* 140)
 (defvar *display-ip* nil)
@@ -57,8 +65,6 @@ simple mt on classroom based on hunchensocket demo.
 (defmacro navi ()
   `(htm
     (:p
-     (:a :href "https://hcc.hkim.jp" :class "btn btn-primary btn-sm" "情報学演習")
-     " | "
      (:a :href "/on" :class "btn btn-outline-primary btn-sm" "on")
      " | "
      (:a :href "/off" :class "btn btn-outline-primary btn-sm" "off")
@@ -82,7 +88,7 @@ simple mt on classroom based on hunchensocket demo.
        (:title "bulletin board system"))
       (:body
        (:div :class "container"
-        (:h3 :class "page-header hidden-xs" "Micro-Twitter for hkimura classes")
+        (:h3 :class "page-header hidden-xs" "Websocket example")
         (navi)
         ,@body
         (:span
@@ -178,32 +184,67 @@ simple mt on classroom based on hunchensocket demo.
 
 (defun start-server ()
   (setf (html-mode) :html5)
-
   (push (create-static-file-dispatcher-and-handler
-         "/robots.txt" "static/robots.txt") *dispatch-table*)
+         "/robots.txt"
+         (format nil "~a/static/robots.txt" *ws-wd*))
+        *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/my.css" "static/my.css") *dispatch-table*)
+         "/my.css"
+         (format nil "~a/static/my.css" *ws-wd*))
+        *dispatch-table*)
   (push (create-static-file-dispatcher-and-handler
-         "/my.js"  "static/my.js") *dispatch-table*)
-
-  (format t "version: ~a~%" *version*)
+         "/my.js"
+         (format nil "~a/static/my.js" *ws-wd*))
+        *dispatch-table*)
 
   (setf *http-server*
         (make-instance 'easy-acceptor
-                       :address *my-addr* :port *http-port*))
+                       :address *my-addr*
+                       :port *http-port*))
   (start *http-server*)
-  (format t "http://~a:~d/~%" *my-addr* *http-port*)
 
   (setf *ws-server*
         (make-instance 'hunchensocket:websocket-acceptor
-                     :address *my-addr* :port *ws-port*))
+                       :address *my-addr*
+                       :port *ws-port*))
   (start *ws-server*)
+
+  (format t "version: ~a~%" *version*)
+  (format t "http://~a:~d/~%" *my-addr* *http-port*)
   (format t "~a~%" *ws-uri*))
 
 (defun stop-server ()
   (format t "~a~%~a" (stop *http-server*) (stop *ws-server*)))
 
+;;https://stevelosh.com/blog/2018/07/fun-with-macros-if-let/
+(defmacro when-let (binding &body body)
+  (destructuring-bind ((symbol value)) binding
+    `(let ((,symbol ,value))
+      (when ,symbol
+        ,@body))))
+
+(defun init-constants ()
+  (when-let ((port (my-getenv "MT_HTTP")))
+    (setf *http-port* (parse-integer port)))
+  (when-let ((port (my-getenv "MT_WS")))
+    (setf *ws-port* (parse-integer port)))
+  (when-let ((addr (my-getenv "MT_ADDR")))
+    (setf *my-addr* addr))
+  (when-let ((uri (my-getenv "MT_URI")))
+    (setf *ws-uri* uri))
+  (when-let ((wd (my-getenv "MT_WD")))
+    (setf *wd-wd* wd)))
+
+(defun display-constants ()
+  (format t "*http-port* ~a~%" *http-port*)
+  (format t "*ws-port* ~a~%" *ws-port*)
+  (format t "*my-addr* ~a~%" *my-addr*)
+  (format t "*ws-uri* ~a~%" *ws-uri*)
+  (format t "*wd-wd* ~a~%" *ws-wd*))
+
 ;; when production(sbcl), use this main defined.
 (defun main ()
+  (init-constants)
+  (display-constants)
   (start-server)
   (loop (sleep 60)))
