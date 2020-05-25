@@ -225,9 +225,9 @@ simple mt on classroom based on hunchensocket demo.
 
 (defun init-constants ()
   (when-let ((port (my-getenv "MT_HTTP")))
-    (setf *http-port* port))
+    (setf *http-port* (parse-integer port)))
   (when-let ((port (my-getenv "MT_WS")))
-    (setf *ws-port* port))
+    (setf *ws-port* (parse-integer port)))
   (when-let ((addr (my-getenv "MT_ADDR")))
     (setf *my-addr* addr))
   (when-let ((uri (my-getenv "MT_URI")))
@@ -235,8 +235,16 @@ simple mt on classroom based on hunchensocket demo.
   (when-let ((wd (my-getenv "MT_WD")))
     (setf *wd-wd* wd)))
 
+(defun display-constants ()
+  (format t "*http-port* ~a~%" *http-port*)
+  (format t "*ws-port* ~a~%" *ws-port*)
+  (format t "*my-addr* ~a~%" *my-addr*)
+  (format t "*ws-uri* ~a~%" *ws-uri*)
+  (format t "*wd-wd* ~a~%" *ws-wd*))
+
 ;; when production(sbcl), use this main defined.
 (defun main ()
   (init-constants)
+  (display-constants)
   (start-server)
   (loop (sleep 60)))
