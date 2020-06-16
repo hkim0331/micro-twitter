@@ -3,10 +3,10 @@ var output;
 function init() {
     ws = document.getElementById("ws").value;
     output = document.getElementById("timeline");
-    testWebSocket(ws);
+    createWebSocket(ws);
 }
 
-function testWebSocket(ws) {
+function createWebSocket(ws) {
     websocket = new WebSocket(ws);
     websocket.onopen    = function(evt) { onOpen(evt) };
     websocket.onclose   = function(evt) { onClose(evt) };
@@ -15,8 +15,14 @@ function testWebSocket(ws) {
 }
 
 function onOpen(evt) {
-    writeToScreen("");//must not removed.
+//must not removed following two lines. why?
+//    writeToScreen("");
     doSend("WebSocket rocks");
+
+    // timer = setInterval(function() {
+    //     doSend("ping");
+    //     console.log("doSend ping");
+    // }, 10000);
 }
 
 function onClose(evt) {
@@ -24,6 +30,7 @@ function onClose(evt) {
 }
 
 function onMessage(evt) {
+    console.log("evt.data:" + evt.data);
     writeToScreen(evt.data);
 }
 

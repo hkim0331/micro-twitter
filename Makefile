@@ -1,6 +1,9 @@
+# mt:
+# 	sbcl --eval "(ql:quickload :mt)" --eval "(in-package :mt)" \
+# 	--eval "(sb-ext:save-lisp-and-die \"mt\" :executable t :toplevel 'main)"
+
 mt:
-	sbcl --eval "(ql:quickload :mt)" --eval "(in-package :mt)" \
-	--eval "(sb-ext:save-lisp-and-die \"mt\" :executable t :toplevel 'main)"
+	ros build mt.ros
 
 restart: stop clean start
 
