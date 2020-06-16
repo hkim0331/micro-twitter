@@ -46,7 +46,7 @@ simple mt on classroom based on hunchensocket demo.
      #+SBCL (sb-unix::posix-getenv name)
      #+LISPWORKS (lispworks:environment-variable name)))
 
-(defvar *version* "5.4.1")
+(defvar *version* "5.5.1")
 ;;
 ;; これだとコンパイル時に決定する、か？
 ;;
@@ -214,7 +214,7 @@ simple mt on classroom based on hunchensocket demo.
   (format t "~a~%" *mt-uri*))
 
 (defun stop-server ()
-  (format t "~a~%~a" (stop *mt-http*) (stop *mt-ws*)))
+  (format t "~a~%~a" (stop *ws-server*) (stop *http-server*)))
 
 ;;https://stevelosh.com/blog/2018/07/fun-with-macros-if-let/
 (defmacro when-let (binding &body body)
@@ -242,7 +242,7 @@ simple mt on classroom based on hunchensocket demo.
   (format t "*mt-uri* ~a~%"  *mt-uri*)
   (format t "*mt-wd* ~a~%"   *mt-wd*))
 
-;; when production(sbcl), use this main defined.
+;; when production(sbcl), use this main.
 (defun main ()
   (init-constants)
   (display-constants)
